@@ -398,3 +398,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/py/user/zerochan.tags.json
+/py/user/autocomplete_old.txt
+/py/user/chan.sankakucomplex.tags.json
+/py/user/danbooru.donmai.tags.json
+/py/user/anime-pictures.tags.json

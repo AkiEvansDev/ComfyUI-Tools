@@ -4,7 +4,6 @@ import { BaseWidget, moveArrayItem, removeArrayItem } from "./base.js"
 import { isLowQuality, fitString, drawTogglePart, drawRoundedRectangle, drawNumberWidgetPart } from "./draw.js"
 
 const PROP_LABEL_SHOW_STRENGTHS = "Show Strengths";
-const PROP_LABEL_SHOW_STRENGTHS_STATIC = `@${PROP_LABEL_SHOW_STRENGTHS}`;
 const PROP_VALUE_SHOW_STRENGTHS_SINGLE = "Single Strength";
 const PROP_VALUE_SHOW_STRENGTHS_SEPARATE = "Separate Model & Clip";
 

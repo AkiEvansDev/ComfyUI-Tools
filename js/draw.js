@@ -109,3 +109,27 @@ export function drawNumberWidgetPart(ctx, options) {
     return [xBoundsArrowLess, xBoundsNumber, xBoundsArrowMore];
 }
 drawNumberWidgetPart.WIDTH_TOTAL = 9 + 3 + 32 + 3 + 9;
+
+export function drawNodeWidget(ctx, options) {
+    const lowQuality = isLowQuality();
+    const data = {
+        width: options.width,
+        height: options.height,
+        posY: options.posY,
+        lowQuality,
+        margin: 15,
+        colorOutline: LiteGraph.WIDGET_OUTLINE_COLOR,
+        colorBackground: LiteGraph.WIDGET_BGCOLOR,
+        colorText: LiteGraph.WIDGET_TEXT_COLOR,
+        colorTextSecondary: LiteGraph.WIDGET_SECONDARY_TEXT_COLOR,
+    };
+    ctx.strokeStyle = options.colorStroke || data.colorOutline;
+    ctx.fillStyle = options.colorBackground || data.colorBackground;
+    ctx.beginPath();
+    ctx.roundRect(data.margin, data.posY, data.width - data.margin * 2, data.height, lowQuality ? [0] : options.borderRadius ? [options.borderRadius] : [options.height * 0.5]);
+    ctx.fill();
+    if (!lowQuality) {
+        ctx.stroke();
+    }
+    return data;
+}

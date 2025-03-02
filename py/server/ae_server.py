@@ -1,17 +1,21 @@
-import os
-from aiohttp import web
 from server import PromptServer
+from aiohttp import web
+import os
+import folder_paths
 
-from .utils_server import set_default_page_resources, set_default_page_routes
-from .routes_model_info import *
+dir = os.path.abspath(os.path.join(__file__, "../../user"))
+file = os.path.join(dir, "autocomplete.txt")
 
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-DIR_WEB = os.path.abspath(f'{THIS_DIR}/../../web/')
+if not os.path.exists(dir):
+    os.mkdir(dir)
 
-routes = PromptServer.instance.routes
+@PromptServer.instance.routes.get("/ae/autocomplete")
+async def get_autocomplete(request):
+    if os.path.isfile(file):
+        return web.FileResponse(file)
+    return web.Response(status=404)
 
-set_default_page_resources("comfyui", routes)
-set_default_page_resources("common", routes)
-set_default_page_resources("lib", routes)
-
-set_default_page_routes("link_fixer", routes)
+@PromptServer.instance.routes.get("/ae/loras")
+async def get_loras(request):
+    loras = folder_paths.get_filename_list("loras")
+    return web.json_response(list(loras))

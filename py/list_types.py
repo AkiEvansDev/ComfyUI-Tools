@@ -11,7 +11,7 @@ class IntList:
     RETURN_TYPES = ("INT",)
     RETURN_NAMES = ("value",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/List"
 
     def get_value(self, index, list):
         index = index - 1
@@ -31,7 +31,7 @@ class FloatList:
     RETURN_TYPES = ("FLOAT",)
     RETURN_NAMES = ("value",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/List"
 
     def get_value(self, index, list):
         index = index - 1
@@ -51,7 +51,7 @@ class StringList:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("value",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/List"
 
     def get_value(self, index, list):
         index = index - 1

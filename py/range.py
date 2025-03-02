@@ -17,7 +17,7 @@ class Range:
     RETURN_TYPES = ("INT",)
     RETURN_NAMES = ("current",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/List"
 
     def get_value(self, current, start, end, unique_id):
         update = False
@@ -64,7 +64,7 @@ class XYRange:
     RETURN_TYPES = ("INT", "INT",)
     RETURN_NAMES = ("x", "y",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/List"
 
     def get_value(self, x, y, x_start, x_end, y_start, y_end, unique_id):
         update = False

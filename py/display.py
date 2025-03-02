@@ -1,5 +1,4 @@
 import json
-
 from .base import any_type
 
 class DisplayAny:
@@ -18,6 +17,7 @@ class DisplayAny:
 
     def display(self, source=None):
         value = 'None'
+
         if isinstance(source, str):
             value = source
         elif isinstance(source, (int, float, bool)):

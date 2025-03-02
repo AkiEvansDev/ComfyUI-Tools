@@ -1,7 +1,7 @@
 class AeApi {
     constructor(baseUrl) {
         this.getLorasPromise = null;
-        this.baseUrl = baseUrl || "./ae/api";
+        this.baseUrl = baseUrl || "./ae";
     }
     apiURL(route) {
         return `${this.baseUrl}${route}`;

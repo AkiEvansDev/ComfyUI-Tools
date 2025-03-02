@@ -1,4 +1,28 @@
 import { app } from "../../scripts/app.js";
+import { $el } from "../../scripts/ui.js";
+
+const DIRECT_ATTRIBUTE_MAP = {
+    cellpadding: 'cellPadding',
+    cellspacing: 'cellSpacing',
+    colspan: 'colSpan',
+    frameborder: 'frameBorder',
+    height: 'height',
+    maxlength: 'maxLength',
+    nonce: 'nonce',
+    role: 'role',
+    rowspan: 'rowSpan',
+    type: 'type',
+    usemap: 'useMap',
+    valign: 'vAlign',
+    width: 'width',
+};
+
+const RGX_STRING_VALID = '[a-z0-9_-]';
+const RGX_TAG = new RegExp(`^([a-z]${RGX_STRING_VALID}*)(\\.|\\[|\\#|$)`, 'i');
+const RGX_ATTR_ID = new RegExp(`#(${RGX_STRING_VALID}+)`, 'gi');
+const RGX_ATTR_CLASS = new RegExp(`(^|\\S)\\.([a-z0-9_\\-\\.]+)`, 'gi');
+const RGX_STRING_CONTENT_TO_SQUARES = '(.*?)(\\[|\\])';
+const RGX_ATTRS_MAYBE_OPEN = new RegExp(`\\[${RGX_STRING_CONTENT_TO_SQUARES}`, 'gi');
 
 const adjustMouseEvent = LGraphCanvas.prototype.adjustMouseEvent;
 LGraphCanvas.prototype.adjustMouseEvent = function (e) {
@@ -104,6 +128,274 @@ export function removeArrayItem(arr, itemOrIndex) {
     arr.splice(index, 1);
 }
 
+export function dec2hex(dec) {
+    return dec.toString(16).padStart(2, "0");
+}
+
+export function generateId(length) {
+    const arr = new Uint8Array(length / 2);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, dec2hex).join("");
+}
+
+export function getResolver(timeout = 5000) {
+    const resolver = {};
+    resolver.id = generateId(8);
+    resolver.completed = false;
+    resolver.resolved = false;
+    resolver.rejected = false;
+    resolver.promise = new Promise((resolve, reject) => {
+        resolver.reject = (e) => {
+            resolver.completed = true;
+            resolver.rejected = true;
+            reject(e);
+        };
+        resolver.resolve = (data) => {
+            resolver.completed = true;
+            resolver.resolved = true;
+            resolve(data);
+        };
+    });
+    resolver.timeout = setTimeout(() => {
+        if (!resolver.completed) {
+            resolver.reject();
+        }
+    }, timeout);
+    return resolver;
+}
+
+function tryMatch(str, rgx, index = 1) {
+    var _a;
+    let found = '';
+    try {
+        found = ((_a = str.match(rgx)) === null || _a === void 0 ? void 0 : _a[index]) || '';
+    }
+    catch (e) {
+        found = '';
+    }
+    return found;
+}
+
+export function getSelectorTag(str) {
+    return tryMatch(str, RGX_TAG);
+}
+
+export function getSelectorAttributes(selector) {
+    RGX_ATTRS_MAYBE_OPEN.lastIndex = 0;
+    let attrs = [];
+    let result;
+    while (result = RGX_ATTRS_MAYBE_OPEN.exec(selector)) {
+        let attr = result[0];
+        if (attr.endsWith(']')) {
+            attrs.push(attr);
+        }
+        else {
+            attr = result[0]
+                + getOpenAttributesRecursive(selector.substr(RGX_ATTRS_MAYBE_OPEN.lastIndex), 2);
+            RGX_ATTRS_MAYBE_OPEN.lastIndex += (attr.length - result[0].length);
+            attrs.push(attr);
+        }
+    }
+    return attrs;
+}
+
+export function localAssertNotFalsy(input, errorMsg = `Input is not of type.`) {
+    if (input == null) {
+        throw new Error(errorMsg);
+    }
+    return input;
+}
+
+export function setAttribute(element, attribute, value) {
+    let isRemoving = value == null;
+    if (attribute === 'default') {
+        attribute = RGX_DEFAULT_VALUE_PROP.test(element.nodeName) ? 'value' : 'text';
+    }
+    if (attribute === 'text') {
+        empty(element).appendChild(createText(value != null ? String(value) : ''));
+    }
+    else if (attribute === 'html') {
+        empty(element).innerHTML += value != null ? String(value) : '';
+    }
+    else if (attribute == 'style') {
+        if (typeof value === 'string') {
+            element.style.cssText = isRemoving ? '' : (value != null ? String(value) : '');
+        }
+        else {
+            for (const [styleKey, styleValue] of Object.entries(value)) {
+                element.style[styleKey] = styleValue;
+            }
+        }
+    }
+    else if (attribute == 'events') {
+        for (const [key, fn] of Object.entries(value)) {
+            addEvent(element, key, fn);
+        }
+    }
+    else if (attribute === 'parent') {
+        value.appendChild(element);
+    }
+    else if (attribute === 'child' || attribute === 'children') {
+        if (typeof value === 'string' && /^\[[^\[\]]+\]$/.test(value)) {
+            const parseable = value.replace(/^\[([^\[\]]+)\]$/, '["$1"]').replace(/,/g, '","');
+            try {
+                const parsed = JSON.parse(parseable);
+                value = parsed;
+            }
+            catch (e) {
+                console.error(e);
+            }
+        }
+        if (attribute === 'children') {
+            empty(element);
+        }
+        let children = value instanceof Array ? value : [value];
+        for (let child of children) {
+            child = getChild(child);
+            if (child instanceof Node) {
+                if (element instanceof HTMLTemplateElement) {
+                    element.content.appendChild(child);
+                }
+                else {
+                    element.appendChild(child);
+                }
+            }
+        }
+    }
+    else if (attribute == 'for') {
+        element.htmlFor = value != null ? String(value) : '';
+        if (isRemoving) {
+            element.removeAttribute('for');
+        }
+    }
+    else if (attribute === 'class' || attribute === 'className' || attribute === 'classes') {
+        element.className = isRemoving ? '' : Array.isArray(value) ? value.join(' ') : String(value);
+    }
+    else if (attribute === 'dataset') {
+        if (typeof value !== 'object') {
+            console.error('Expecting an object for dataset');
+            return;
+        }
+        for (const [key, val] of Object.entries(value)) {
+            element.dataset[key] = String(val);
+        }
+    }
+    else if (attribute.startsWith('on') && typeof value === 'function') {
+        element.addEventListener(attribute.substring(2), value);
+    }
+    else if (['checked', 'disabled', 'readonly', 'required', 'selected'].includes(attribute)) {
+        element[attribute] = !!value;
+        if (!value) {
+            element.removeAttribute(attribute);
+        }
+        else {
+            element.setAttribute(attribute, attribute);
+        }
+    }
+    else if (DIRECT_ATTRIBUTE_MAP.hasOwnProperty(attribute)) {
+        if (isRemoving) {
+            element.removeAttribute(DIRECT_ATTRIBUTE_MAP[attribute]);
+        }
+        else {
+            element.setAttribute(DIRECT_ATTRIBUTE_MAP[attribute], String(value));
+        }
+    }
+    else if (isRemoving) {
+        element.removeAttribute(attribute);
+    }
+    else {
+        let oldVal = element.getAttribute(attribute);
+        if (oldVal !== value) {
+            element.setAttribute(attribute, String(value));
+        }
+    }
+}
+
+export function setAttributes(element, data) {
+    let attr;
+    for (attr in data) {
+        if (data.hasOwnProperty(attr)) {
+            setAttribute(element, attr, data[attr]);
+        }
+    }
+}
+
+export function getHtmlFragment(value) {
+    if (value.match(/^\s*<.*?>[\s\S]*<\/[a-z0-9]+>\s*$/)) {
+        return document.createRange().createContextualFragment(value.trim());
+    }
+    return null;
+}
+
+export function createText(text) {
+    return document.createTextNode(text);
+}
+
+export function empty(element) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+    return element;
+}
+
+export function createElement(selectorOrMarkup, attrs) {
+    const frag = getHtmlFragment(selectorOrMarkup);
+    let element = frag === null || frag === void 0 ? void 0 : frag.firstElementChild;
+    let selector = "";
+    if (!element) {
+        selector = selectorOrMarkup.replace(/[\r\n]\s*/g, "");
+        const tag = getSelectorTag(selector) || "div";
+        element = document.createElement(tag);
+        selector = selector.replace(RGX_TAG, "$2");
+        selector = selector.replace(RGX_ATTR_ID, '[id="$1"]');
+        selector = selector.replace(RGX_ATTR_CLASS, (match, p1, p2) => `${p1}[class="${p2.replace(/\./g, " ")}"]`);
+    }
+    const selectorAttrs = getSelectorAttributes(selector);
+    if (selectorAttrs) {
+        for (const attr of selectorAttrs) {
+            let matches = attr.substring(1, attr.length - 1).split("=");
+            let key = localAssertNotFalsy(matches.shift());
+            let value = matches.join("=");
+            if (value === undefined) {
+                setAttribute(element, key, true);
+            }
+            else {
+                value = value.replace(/^['"](.*)['"]$/, "$1");
+                setAttribute(element, key, value);
+            }
+        }
+    }
+    if (attrs) {
+        setAttributes(element, attrs);
+    }
+    return element;
+}
+
+export function queryOne(selectors, parent = document) {
+    var _a;
+    return (_a = parent.querySelector(selectors)) !== null && _a !== void 0 ? _a : null;
+}
+
+export function getUrl(path, baseUrl) {
+    if (baseUrl) {
+        return new URL(path, baseUrl).toString();
+    } else {
+        return new URL("../" + path, import.meta.url).toString();
+    }
+}
+
+export function addStylesheet(url) {
+    if (url.endsWith(".js")) {
+        url = url.substr(0, url.length - 2) + "css";
+    }
+    $el("link", {
+        parent: document.head,
+        rel: "stylesheet",
+        type: "text/css",
+        href: url.startsWith("http") ? url : getUrl(url),
+    });
+}
+
 export class BaseWidget {
     constructor(name) {
         this.last_y = 0;
@@ -186,6 +478,52 @@ export class BaseWidget {
     }
     onMouseMove(event, pos, node) {
         return;
+    }
+}
+
+export class BaseNode extends LGraphNode {
+    constructor(title) {
+        super(title);
+        this.isVirtualNode = false;
+        this.removed = false;
+        this.configuring = false;
+        this._tempWidth = 0;
+        this.widgets = this.widgets || [];
+        this.properties = this.properties || {};
+    }
+    configure(info) {
+        this.configuring = true;
+        super.configure(info);
+        for (const w of this.widgets || []) {
+            w.last_y = w.last_y || 0;
+        }
+        this.configuring = false;
+    }
+    async handleAction(action) {
+        action;
+    }
+    removeWidget(widgetOrSlot) {
+        if (typeof widgetOrSlot === "number") {
+            this.widgets.splice(widgetOrSlot, 1);
+        }
+        else if (widgetOrSlot) {
+            const index = this.widgets.indexOf(widgetOrSlot);
+            if (index > -1) {
+                this.widgets.splice(index, 1);
+            }
+        }
+    }
+    onRemoved() {
+        var _a;
+        (_a = super.onRemoved) === null || _a === void 0 ? void 0 : _a.call(this);
+        this.removed = true;
+    }
+}
+
+export class BaseVirtualNode extends BaseNode {
+    constructor(title) {
+        super(title);
+        this.isVirtualNode = true;
     }
 }
 
