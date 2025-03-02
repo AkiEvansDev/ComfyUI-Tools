@@ -99,7 +99,6 @@ class SDXLPromptWithHires:
 
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "CONDITIONING", "CONDITIONING", "STRING",)
     RETURN_NAMES = ("positive_hires", "negative_hires", "positive", "negative", "prompt",)
-    RETURN_NAMES = ("positive", "negative", "prompt",)
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools"
 
