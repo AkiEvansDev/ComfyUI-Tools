@@ -10,6 +10,7 @@ from .py.switch import *
 from .py.display import *
 from .py.loras_loader import *
 from .py.prompt import *
+from .py.image import *
 
 from .py.server.ae_server import *
 
@@ -44,6 +45,8 @@ NODE_CLASS_MAPPINGS = {
     "AE.DisplayAny": DisplayAny,
     "AE.LorasLoader": LorasLoader,
     "AE.SDXLPrompt": SDXLPrompt,
+    "AE.SDXLPromptWithHires": SDXLPromptWithHires,
+    "AE.LoadImageFromPath": LoadImageFromPath,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -77,6 +80,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.DisplayAny": "Display Any",
     "AE.LorasLoader": "Loras Loader",
     "AE.SDXLPrompt": "SDXL Prompt",
+    "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
+    "AE.LoadImageFromPath": "Load Image From Path",
 }
 
 WEB_DIRECTORY = "js"

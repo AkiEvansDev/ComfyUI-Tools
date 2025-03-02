@@ -3,7 +3,7 @@ import { app } from "../../scripts/app.js";
 app.registerExtension({
     name: "AE.SDXLPrompt",
     async beforeRegisterNodeDef(nodeType, nodeData) {
-        if (nodeData.name === "AE.SDXLPrompt") {
+        if (nodeData.name === "AE.SDXLPrompt" || nodeData.name === "AE.SDXLPromptWithHires") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
                 const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;

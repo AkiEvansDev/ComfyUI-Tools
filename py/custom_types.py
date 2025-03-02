@@ -10,7 +10,7 @@ class Int:
     RETURN_TYPES = ("INT",)
     RETURN_NAMES = ("int",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools/Types"
+    CATEGORY = "AE.Tools/Type"
 
     def get_value(self, value):
         return (value,)
@@ -27,7 +27,7 @@ class Float:
     RETURN_TYPES = ("FLOAT",)
     RETURN_NAMES = ("float",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools/Types"
+    CATEGORY = "AE.Tools/Type"
 
     def get_value(self, value):
         return (value,)
@@ -44,7 +44,7 @@ class String:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("string",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools/Types"
+    CATEGORY = "AE.Tools/Type"
 
     def get_value(self, value):
         return (value,)
@@ -61,7 +61,7 @@ class Text:
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("text",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools/Types"
+    CATEGORY = "AE.Tools/Type"
 
     def get_value(self, value):
         return (value,)

@@ -21,11 +21,7 @@ class Range:
 
     def get_value(self, current, start, end, unique_id):
         update = False
-
-        if start == end:
-            start -= 1
-            update = True
-
+        
         if start > end:
             start, end = end, start
             update = True
@@ -69,14 +65,6 @@ class XYRange:
     def get_value(self, x, y, x_start, x_end, y_start, y_end, unique_id):
         update = False
 
-        if x_start == x_end:
-            x_start -= 1
-            update = True
-
-        if y_start == y_end:
-            y_start -= 1
-            update = True
-
         if x_start > x_end:
             x_start, x_end = x_end, x_start
             update = True
@@ -88,10 +76,11 @@ class XYRange:
         if update:
             PromptServer.instance.send_sync("ae-xyrange-node-update", {"node_id": unique_id, "x_start": x_start, "x_end": x_end, "y_start": y_start, "y_end": y_end})
         
+        if x < x_start or x > x_end:
+            x = x_start
+
         if y < y_start or y > y_end:
             y = y_start
-            if x < x_start or x > x_end:
-                x = x_start
         else:
             y += 1
             if y > y_end:

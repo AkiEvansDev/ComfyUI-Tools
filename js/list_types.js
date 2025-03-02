@@ -85,7 +85,6 @@ app.registerExtension({
                                 numbers.style.transform = input.style.transform;
                                 numbers.style.left = input.style.left;
                                 numbers.style.top = input.style.top;
-                                //numbers.style.width = input.style.width;
                                 numbers.style.height = input.style.height;
                                 numbers.style.position = input.style.position;
                                 numbers.style.zIndex = parseInt(input.style.zIndex) + 1;
