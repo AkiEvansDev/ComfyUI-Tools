@@ -3,7 +3,7 @@ from aiohttp import web
 import os
 import folder_paths
 
-dir = os.path.abspath(os.path.join(__file__, "../../user"))
+dir = os.path.abspath(os.path.join(__file__, "../../autocomplete"))
 file = os.path.join(dir, "autocomplete.txt")
 
 if not os.path.exists(dir):

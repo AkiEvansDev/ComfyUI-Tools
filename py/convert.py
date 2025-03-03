@@ -48,8 +48,8 @@ class ToString:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Convert"
 
-    def display(self, source=None):
-        value = 'None'
+    def get_value(self, source=None):
+        value = "None"
 
         if isinstance(source, str):
             value = source
@@ -59,6 +59,6 @@ class ToString:
             try:
                 value = str(source)
             except Exception:
-                value = 'error'
+                value = "error"
 
         return (value,)

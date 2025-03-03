@@ -7,14 +7,14 @@ class SDXLPrompt:
         return {
             "required": {
                 "clip": ("CLIP",),
-                "find_1": ("STRING", {"default": '', "multiline": False}),
-                "find_2": ("STRING", {"default": '', "multiline": False}),
-                "character": ("STRING", {"default": '', "multiline": True}),
-                "posture": ("STRING", {"default": '', "multiline": True}),
-                "background": ("STRING", {"default": '', "multiline": True}),
-                "style": ("STRING", {"default": '', "multiline": True}),
-                "negative": ("STRING", {"default": '', "multiline": True}),
-                "negative_style": ("STRING", {"default": '', "multiline": True}),
+                "find_1": ("STRING", {"default": "", "multiline": False}),
+                "find_2": ("STRING", {"default": "", "multiline": False}),
+                "character": ("STRING", {"default": "", "multiline": True}),
+                "posture": ("STRING", {"default": "", "multiline": True}),
+                "background": ("STRING", {"default": "", "multiline": True}),
+                "style": ("STRING", {"default": "", "multiline": True}),
+                "negative": ("STRING", {"default": "", "multiline": True}),
+                "negative_style": ("STRING", {"default": "", "multiline": True}),
             },
             "optional": {
                 "replace_1": ("STRING", {"forceInput": True}),
@@ -25,7 +25,7 @@ class SDXLPrompt:
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "STRING",)
     RETURN_NAMES = ("positive", "negative", "prompt",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/Config"
 
     def get_value(self, clip, find_1, find_2, character, posture, background, style, negative, negative_style, replace_1="", replace_2=""):
         replace_1 = clean_string(replace_1)
@@ -80,16 +80,16 @@ class SDXLPromptWithHires:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "clip_hires": ("CLIP",),
                 "clip": ("CLIP",),
-                "find_1": ("STRING", {"default": '', "multiline": False}),
-                "find_2": ("STRING", {"default": '', "multiline": False}),
-                "character": ("STRING", {"default": '', "multiline": True}),
-                "posture": ("STRING", {"default": '', "multiline": True}),
-                "background": ("STRING", {"default": '', "multiline": True}),
-                "style": ("STRING", {"default": '', "multiline": True}),
-                "negative": ("STRING", {"default": '', "multiline": True}),
-                "negative_style": ("STRING", {"default": '', "multiline": True}),
+                "clip_hires": ("CLIP",),
+                "find_1": ("STRING", {"default": "", "multiline": False}),
+                "find_2": ("STRING", {"default": "", "multiline": False}),
+                "character": ("STRING", {"default": "", "multiline": True}),
+                "posture": ("STRING", {"default": "", "multiline": True}),
+                "background": ("STRING", {"default": "", "multiline": True}),
+                "style": ("STRING", {"default": "", "multiline": True}),
+                "negative": ("STRING", {"default": "", "multiline": True}),
+                "negative_style": ("STRING", {"default": "", "multiline": True}),
             },
             "optional": {
                 "replace_1": ("STRING", {"forceInput": True}),
@@ -98,11 +98,11 @@ class SDXLPromptWithHires:
         }
 
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "CONDITIONING", "CONDITIONING", "STRING",)
-    RETURN_NAMES = ("positive_hires", "negative_hires", "positive", "negative", "prompt",)
+    RETURN_NAMES = ("positive", "negative", "positive_hires", "negative_hires", "prompt",)
     FUNCTION = "get_value"
-    CATEGORY = "AE.Tools"
+    CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, clip_hires, clip, find_1, find_2, character, posture, background, style, negative, negative_style, replace_1="", replace_2=""):
+    def get_value(self, clip, clip_hires, find_1, find_2, character, posture, background, style, negative, negative_style, replace_1="", replace_2=""):
         replace_1 = clean_string(replace_1)
         replace_2 = clean_string(replace_2)
         find_1 = clean_string(find_1)
@@ -162,4 +162,4 @@ class SDXLPromptWithHires:
         
         prompt = "\r\n\r\n".join(filter_non_empty_strings([character, posture, background, style, negative, negative_style]))
 
-        return (positive_con_hires, negative_con_hires, positive_con, negative_con, prompt,)
+        return (positive_con, negative_con, positive_con_hires, negative_con_hires, prompt,)

@@ -2,7 +2,7 @@ from .base import FlexibleOptionalInputType, any_type
 
 def is_none(value):
     if value is not None:
-        if isinstance(value, dict) and 'model' in value and 'clip' in value:
+        if isinstance(value, dict) and "model" in value and "clip" in value:
             return not value or all(v is None for v in value.values())
     return value is None
 
@@ -15,14 +15,14 @@ class AnySwitch:
         }
 
     RETURN_TYPES = (any_type,)
-    RETURN_NAMES = ('*',)
+    RETURN_NAMES = ("*",)
     FUNCTION = "switch"
     CATEGORY = "AE.Tools/Switch"
 
     def switch(self, **kwargs):
         any_value = None
         for key, value in kwargs.items():
-            if key.startswith('any_') and not is_none(value):
+            if key.startswith("any_") and not is_none(value):
                 any_value = value
                 break
         return (any_value,)
@@ -39,7 +39,7 @@ class IntSwitch:
         }
 
     RETURN_TYPES = ("INT",)
-    RETURN_NAMES = ('result',)
+    RETURN_NAMES = ("result",)
     FUNCTION = "switch"
     CATEGORY = "AE.Tools/Switch"
 
@@ -58,7 +58,7 @@ class FloatSwitch:
         }
 
     RETURN_TYPES = ("FLOAT",)
-    RETURN_NAMES = ('result',)
+    RETURN_NAMES = ("result",)
     FUNCTION = "switch"
     CATEGORY = "AE.Tools/Switch"
 
@@ -70,14 +70,14 @@ class StringSwitch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "a": ("STRING", {"default": '', "multiline": False}),
-                "b": ("STRING", {"default": '', "multiline": False}),
+                "a": ("STRING", {"default": "", "multiline": False}),
+                "b": ("STRING", {"default": "", "multiline": False}),
                 "condition": ("BOOLEAN", {"default": True}),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ('result',)
+    RETURN_NAMES = ("result",)
     FUNCTION = "switch"
     CATEGORY = "AE.Tools/Switch"
 

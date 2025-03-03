@@ -16,7 +16,7 @@ class AeApi {
     async postJson(route, json) {
         const body = new FormData();
         body.append("json", JSON.stringify(json));
-        return await rgthreeApi.fetchJson(route, { method: "POST", body });
+        return await this.fetchJson(route, { method: "POST", body });
     }
     getLoras(force = false) {
         if (!this.getLorasPromise || force) {

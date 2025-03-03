@@ -1,16 +1,18 @@
 from .py.custom_types import *
 from .py.math import *
 from .py.string import *
-from .py.list_types import *
+from .py.list import *
 from .py.convert import *
 from .py.range import *
 from .py.configs import *
 from .py.seed import *
 from .py.switch import *
 from .py.display import *
-from .py.loras_loader import *
+from .py.loras import *
 from .py.prompt import *
 from .py.image import *
+from .py.upscale import *
+from .py.checkpoint import *
 
 from .py.server.ae_server import *
 
@@ -27,6 +29,7 @@ NODE_CLASS_MAPPINGS = {
     "AE.StringConcat": StringConcat,
     "AE.StringReplace": StringReplace,
     "AE.StringEquals": StringEquals,
+    "AE.ToStringConcat": ToStringConcat,
     "AE.IntList": IntList,
     "AE.FloatList": FloatList,
     "AE.StringList": StringList,
@@ -37,6 +40,7 @@ NODE_CLASS_MAPPINGS = {
     "AE.XYRange": XYRange,
     "AE.SDXLConfig": SDXLConfig,
     "AE.SamplerConfig": SamplerConfig,
+    "AE.ControlNetConfig": ControlNetConfig,
     "AE.Seed": Seed,
     "AE.AnySwitch": AnySwitch,
     "AE.IntSwitch": IntSwitch,
@@ -44,9 +48,13 @@ NODE_CLASS_MAPPINGS = {
     "AE.StringSwitch": StringSwitch,
     "AE.DisplayAny": DisplayAny,
     "AE.LorasLoader": LorasLoader,
+    "AE.LoraLoader": CustomLoraLoader,
     "AE.SDXLPrompt": SDXLPrompt,
     "AE.SDXLPromptWithHires": SDXLPromptWithHires,
     "AE.LoadImageFromPath": LoadImageFromPath,
+    "AE.SaveImage": CustomImageSave,
+    "AE.UpscaleLatentBy": UpscaleLatentBy,
+    "AE.CheckpointLoader": CustomCheckpointLoader,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -62,6 +70,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.StringConcat": "String Concat",
     "AE.StringReplace": "String Replace",
     "AE.StringEquals": "String Equals",
+    "AE.ToStringConcat": "To String Concat",
     "AE.IntList": "Int List",
     "AE.FloatList": "Float List",
     "AE.StringList": "String List",
@@ -72,6 +81,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.XYRange": "XY Range",
     "AE.SDXLConfig" : "SDXL Config",
     "AE.SamplerConfig" : "Sampler Config",
+    "AE.ControlNetConfig" : "ControlNet Config",
     "AE.Seed" : "Seed Value",
     "AE.AnySwitch" : "Any Switch",
     "AE.IntSwitch": "Int Switch",
@@ -79,10 +89,14 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.StringSwitch": "String Switch",
     "AE.DisplayAny": "Display Any",
     "AE.LorasLoader": "Loras Loader",
+    "AE.LoraLoader": "Lora Loader",
     "AE.SDXLPrompt": "SDXL Prompt",
     "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
     "AE.LoadImageFromPath": "Load Image From Path",
+    "AE.SaveImage": "Save Image",
+    "AE.UpscaleLatentBy": "Upscale Latent By Model",
+    "AE.CheckpointLoader": "Checkpoint Loader",
 }
 
 WEB_DIRECTORY = "js"
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS', 'WEB_DIRECTORY']
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]

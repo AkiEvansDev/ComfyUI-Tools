@@ -6,8 +6,8 @@ class MathInt:
                 "a": ("INT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff}),
                 "b": ("INT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff}),
                 "action": (
-                    ['a + b', 'a - b', 'a * b', 'a / b'], 
-                    {"default": 'a + b'}
+                    ["a + b", "a - b", "a * b", "a / b"], 
+                    {"default": "a + b"}
                 ),
             },
         }
@@ -18,13 +18,13 @@ class MathInt:
     CATEGORY = "AE.Tools/Math"
 
     def get_value(self, a, b, action):
-        if action == 'a + b':
+        if action == "a + b":
             a += b
-        elif action == 'a - b':
+        elif action == "a - b":
             a -= b
-        elif action == 'a * b':
+        elif action == "a * b":
             a *= b
-        elif action == 'a / b':
+        elif action == "a / b":
             a = int(a / b if b != 0 else 1)
 
         return (a,)
@@ -37,8 +37,8 @@ class MathFloat:
                 "a": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "b": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "action": (
-                    ['a + b', 'a - b', 'a * b', 'a / b'], 
-                    {"default": 'a + b'}
+                    ["a + b", "a - b", "a * b", "a / b"], 
+                    {"default": "a + b"}
                 ),
             },
         }
@@ -49,13 +49,13 @@ class MathFloat:
     CATEGORY = "AE.Tools/Math"
 
     def get_value(self, a, b, action):
-        if action == 'a + b':
+        if action == "a + b":
             a += b
-        elif action == 'a - b':
+        elif action == "a - b":
             a -= b
-        elif action == 'a * b':
+        elif action == "a * b":
             a *= b
-        elif action == 'a / b':
+        elif action == "a / b":
             a /= b if b != 0 else 1
 
         return (a,)
@@ -68,8 +68,8 @@ class CompareInt:
                 "a": ("INT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff}),
                 "b": ("INT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff}),
                 "action": (
-                    ['a < b', 'a > b', 'a == b', 'a <= b', 'a >= b'], 
-                    {"default": 'a < b'}
+                    ["a < b", "a > b", "a == b", "a <= b", "a >= b"], 
+                    {"default": "a < b"}
                 ),
             },
         }
@@ -82,15 +82,15 @@ class CompareInt:
     def get_value(self, a, b, action):
         result = False
 
-        if action == 'a < b':
+        if action == "a < b":
             result = a < b
-        elif action == 'a > b':
+        elif action == "a > b":
             result = a > b
-        elif action == 'a == b':
+        elif action == "a == b":
             result = a == b
-        elif action == 'a <= b':
+        elif action == "a <= b":
             result = a <= b
-        elif action == 'a >= b':
+        elif action == "a >= b":
             result = a >= b
 
         return (result,)
@@ -103,8 +103,8 @@ class CompareFloat:
                 "a": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "b": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "action": (
-                    ['a < b', 'a > b', 'a == b', 'a <= b', 'a >= b'], 
-                    {"default": 'a < b'}
+                    ["a < b", "a > b", "a == b", "a <= b", "a >= b"], 
+                    {"default": "a < b"}
                 ),
             },
         }
@@ -117,15 +117,15 @@ class CompareFloat:
     def get_value(self, a, b, action):
         result = False
 
-        if action == 'a < b':
+        if action == "a < b":
             result = a < b
-        elif action == 'a > b':
+        elif action == "a > b":
             result = a > b
-        elif action == 'a == b':
+        elif action == "a == b":
             result = a == b
-        elif action == 'a <= b':
+        elif action == "a <= b":
             result = a <= b
-        elif action == 'a >= b':
+        elif action == "a >= b":
             result = a >= b
 
         return (result,)

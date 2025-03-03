@@ -396,6 +396,40 @@ export function addStylesheet(url) {
     });
 }
 
+export function isValidConnection(ioA, ioB) {
+    if (!ioA || !ioB) {
+        return false;
+    }
+    const typeA = String(ioA.type);
+    const typeB = String(ioB.type);
+    let isValid = LiteGraph.isValidConnection(typeA, typeB);
+
+    if (!isValid) {
+        let areCombos =
+            (typeA.includes(",") && typeB === "COMBO") || (typeA === "COMBO" && typeB.includes(","));
+        if (areCombos) {
+            const nameA = ioA.name.toUpperCase().replace("_NAME", "").replace("CKPT", "MODEL");
+            const nameB = ioB.name.toUpperCase().replace("_NAME", "").replace("CKPT", "MODEL");
+            isValid = nameA.includes(nameB) || nameB.includes(nameA);
+        }
+    }
+    return isValid;
+}
+
+const oldIsValidConnection = LiteGraph.isValidConnection;
+LiteGraph.isValidConnection = function (typeA, typeB) {
+    let isValid = oldIsValidConnection.call(LiteGraph, typeA, typeB);
+    if (!isValid) {
+        typeA = String(typeA);
+        typeB = String(typeB);
+
+        let areCombos =
+            (typeA.includes(",") && typeB === "COMBO") || (typeA === "COMBO" && typeB.includes(","));
+        isValid = areCombos;
+    }
+    return isValid;
+};
+
 export class BaseWidget {
     constructor(name) {
         this.last_y = 0;

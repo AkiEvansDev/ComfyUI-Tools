@@ -133,3 +133,62 @@ export function drawNodeWidget(ctx, options) {
     }
     return data;
 }
+
+export function addMenuItemOnExtraMenuOptions(node, config, menuOptions, after = "Shape") {
+    let idx = menuOptions
+        .slice()
+        .reverse()
+        .findIndex((option) => option === null || option === void 0 ? void 0 : option.isAe);
+    if (idx == -1) {
+        idx = menuOptions.findIndex((option) => { var _a; return (_a = option === null || option === void 0 ? void 0 : option.content) === null || _a === void 0 ? void 0 : _a.includes(after); }) + 1;
+        if (!idx) {
+            idx = menuOptions.length - 1;
+        }
+        menuOptions.splice(idx, 0, null);
+        idx++;
+    }
+    else {
+        idx = menuOptions.length - idx;
+    }
+    const subMenuOptions = typeof config.subMenuOptions === "function"
+        ? config.subMenuOptions(node)
+        : config.subMenuOptions;
+    menuOptions.splice(idx, 0, {
+        content: typeof config.name == "function" ? config.name(node) : config.name,
+        has_submenu: !!(subMenuOptions === null || subMenuOptions === void 0 ? void 0 : subMenuOptions.length),
+        isAe: true,
+        callback: (value, _options, event, parentMenu, _node) => {
+            if (!!(subMenuOptions === null || subMenuOptions === void 0 ? void 0 : subMenuOptions.length)) {
+                new LiteGraph.ContextMenu(subMenuOptions.map((option) => (option ? { content: option } : null)), {
+                    event,
+                    parentMenu,
+                    callback: (subValue, _options, _event, _parentMenu, _node) => {
+                        if (config.property) {
+                            node.properties = node.properties || {};
+                            node.properties[config.property] = config.prepareValue
+                                ? config.prepareValue(subValue.content || '', node)
+                                : subValue.content || '';
+                        }
+                        config.callback && config.callback(node, subValue === null || subValue === void 0 ? void 0 : subValue.content);
+                    },
+                });
+                return;
+            }
+            if (config.property) {
+                node.properties = node.properties || {};
+                node.properties[config.property] = config.prepareValue
+                    ? config.prepareValue(node.properties[config.property], node)
+                    : !node.properties[config.property];
+            }
+            config.callback && config.callback(node, value === null || value === void 0 ? void 0 : value.content);
+        },
+    });
+}
+
+export function addMenuItem(node, _app, config, after = "Shape") {
+    const oldGetExtraMenuOptions = node.prototype.getExtraMenuOptions;
+    node.prototype.getExtraMenuOptions = function (canvas, menuOptions) {
+        oldGetExtraMenuOptions && oldGetExtraMenuOptions.apply(this, [canvas, menuOptions]);
+        addMenuItemOnExtraMenuOptions(this, config, menuOptions, after);
+    };
+}

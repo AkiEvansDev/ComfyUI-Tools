@@ -16,7 +16,7 @@ class DisplayAny:
     CATEGORY = "AE.Tools"
 
     def display(self, source=None):
-        value = 'None'
+        value = "None"
 
         if isinstance(source, str):
             value = source
@@ -29,6 +29,6 @@ class DisplayAny:
                 try:
                     value = str(source)
                 except Exception:
-                    value = 'source exists, but could not be serialized.'
+                    value = "source exists, but could not be serialized."
 
         return {"ui": {"text": (value,)}}

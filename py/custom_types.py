@@ -37,8 +37,8 @@ class String:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "value": ("STRING", {"default": '', "multiline": False}),
-            }
+                "value": ("STRING", {"default": "", "multiline": False}),
+            },
         }
 
     RETURN_TYPES = ("STRING",)
@@ -54,8 +54,8 @@ class Text:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "value": ("STRING", {"default": '', "multiline": True}),
-            }
+                "value": ("STRING", {"default": "", "multiline": True}),
+            },
         }
 
     RETURN_TYPES = ("STRING",)

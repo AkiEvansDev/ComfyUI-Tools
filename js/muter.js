@@ -15,6 +15,7 @@ export class BaseFastGroupsModeChanger extends BaseVirtualNode {
         this.debouncerTempWidth = 0;
         this.tempSize = null;
         this.serialize_widgets = false;
+        this.widgets_start_y = 10;
         this.properties[PROPERTY_MATCH_TITLE] = "";
         this.properties[PROPERTY_SHOW_NAV] = true;
         this.properties[PROPERTY_SORT] = "position";
@@ -106,7 +107,6 @@ export class BaseFastGroupsModeChanger extends BaseVirtualNode {
                     options: { on: "yes", off: "no" },
                     draw: function (ctx, node, width, posY, height) {
                         var _a;
-                        posY = posY + 10;
                         const widgetData = drawNodeWidget(ctx, {
                             width,
                             height,
@@ -206,7 +206,7 @@ export class BaseFastGroupsModeChanger extends BaseVirtualNode {
                     for (const node of group._nodes) {
                         node.mode = (newValue ? this.modeOn : this.modeOff);
                     }
-                    group._rgthreeHasAnyActiveNode = newValue;
+                    group._hasAnyActiveNode = newValue;
                     widget.value = newValue;
                     app.graph.setDirtyCanvas(true, false);
                 };
@@ -219,8 +219,8 @@ export class BaseFastGroupsModeChanger extends BaseVirtualNode {
                 widget.name = widgetName;
                 this.setDirtyCanvas(true, false);
             }
-            if (widget.value != group._rgthreeHasAnyActiveNode) {
-                widget.value = group._rgthreeHasAnyActiveNode;
+            if (widget.value != group._hasAnyActiveNode) {
+                widget.value = group._hasAnyActiveNode;
                 this.setDirtyCanvas(true, false);
             }
             if (this.widgets[index] !== widget) {
