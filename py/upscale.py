@@ -198,7 +198,7 @@ class UpscaleLatentBy:
         if model_management.should_use_fp16():
             self.dtype = torch.float16
 
-        self.weight_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "model", "sdxl_resizer.pt")
+        self.model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "model", "sdxl_resizer.pt")
         self.model = None
 
     @classmethod
@@ -220,7 +220,7 @@ class UpscaleLatentBy:
         samples = latent["samples"].to(device=device, dtype=self.dtype)
 
         if not self.model:
-            self.model = LatentResizer.load_model(self.weight_path, device, self.dtype)
+            self.model = LatentResizer.load_model(self.model_path, device, self.dtype)
 
         self.model.to(device=device)
         latent_out = (self.model(self.scale_factor * samples, scale=scale_by) / self.scale_factor)
