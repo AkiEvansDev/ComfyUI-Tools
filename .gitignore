@@ -401,5 +401,4 @@ FodyWeavers.xsd
 
 /py/autocomplete/*.txt
 /py/autocomplete/*.json
-
 /py/model/*
