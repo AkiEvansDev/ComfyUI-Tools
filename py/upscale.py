@@ -192,12 +192,14 @@ class LatentResizer(nn.Module):
 
 class UpscaleLatentBy:
     def __init__(self):
-        self.local_dir = os.path.dirname(os.path.realpath(__file__))
         self.scale_factor = 0.13025
         self.dtype = torch.float32
+
         if model_management.should_use_fp16():
             self.dtype = torch.float16
-        self.weight_path = "model/sdxl_resizer.pt"
+
+        self.weight_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "model", "sdxl_resizer.pt")
+        self.model = None
 
     @classmethod
     def INPUT_TYPES(s):

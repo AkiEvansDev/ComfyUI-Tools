@@ -94,6 +94,8 @@ class LorasLoader:
     def load_loras(self, model, clip, **kwargs):
         names = ""
         
+        loader = LoraLoader();
+
         for key, value in kwargs.items():
             key = key.upper()
             if not key.startswith("LORA_"):
@@ -105,7 +107,7 @@ class LorasLoader:
                 if value["on"] and (strength_model != 0 or strength_clip != 0):
                     lora = get_lora_by_filename(value["lora"])
                     if lora is not None:
-                        model, clip = LoraLoader().load_lora(model, clip, lora, strength_model, strength_clip)
+                        model, clip = loader.load_lora(model, clip, lora, strength_model, strength_clip)
                         names += extract_filename(value["lora"]) + ":" + "{:.2f}".format(value["strength"]) + ", "
 
         if is_not_blank(names):

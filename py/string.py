@@ -35,10 +35,16 @@ class StringConcat:
     CATEGORY = "AE.Tools/String"
 
     def get_value(self, a, separator, b):
+        if is_not_blank(a):
+            a = a.replace("\\n",  "\n")
+
         if is_not_blank(separator):
             separator = separator.replace("\\n",  "\n")
+
         if is_not_blank(b):
+            b = b.replace("\\n",  "\n")
             a = a + separator + b 
+
         return (a,)
 
 class StringReplace:
@@ -108,5 +114,8 @@ class ToStringConcat:
                 template = template.replace(f"{{{key}}}", ToString.get_value(self, value)[0])
             else:
                 template = template + separator + ToString.get_value(self, value)[0]
+                
+        if is_not_blank(separator):
+            template = template.strip(separator)
 
         return (template,)

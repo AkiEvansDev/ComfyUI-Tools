@@ -1,4 +1,4 @@
-from nodes import EmptyLatentImage, MAX_RESOLUTION, ControlNetLoader
+from nodes import MAX_RESOLUTION, EmptyLatentImage, ControlNetLoader
 import comfy.samplers
 import folder_paths
 from .base import extract_filename
@@ -37,7 +37,7 @@ class SDXLConfig:
         result = [x.strip() for x in dimensions.split("x")]
         width = int(result[0])
         height = int(result[1].split(" ")[0])
-        latent = EmptyLatentImage().generate(width, height, batch)[0]
+        latent, = EmptyLatentImage().generate(width, height, batch)
         return (latent, sampler, scheduler,)
 
 class SamplerConfig:
@@ -78,5 +78,5 @@ class ControlNetConfig:
 
     def get_value(self, model, strength, start, end):
         info = extract_filename(model) + ":" + "{:.2f}".format(strength) + f" [{float(start):.2f}:{float(end):.2f}]"
-        control_net, = ControlNetLoader.load_controlnet(self, model)
+        control_net, = ControlNetLoader().load_controlnet(model)
         return (control_net, strength, start, end, info,)

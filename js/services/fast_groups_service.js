@@ -17,7 +17,7 @@ class FastGroupsService {
     }
     addFastGroupNode(node) {
         this.fastGroupNodes.push(node);
-        this.scheduleRun(8);
+        this.scheduleRun(50);
     }
     removeFastGroupNode(node) {
         var _a;
@@ -92,7 +92,7 @@ class FastGroupsService {
             this.groupsUnsorted = [...graph._groups];
             for (const group of this.groupsUnsorted) {
                 this.recomputeInsideNodesForGroup(group);
-                group._HasAnyActiveNode = group._nodes.some((n) => n.mode === LiteGraph.ALWAYS);
+                group._hasAnyActiveNode = group._nodes.some((n) => n.mode === LiteGraph.ALWAYS);
             }
             this.msLastUnsorted = now;
         }

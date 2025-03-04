@@ -1,18 +1,20 @@
-from .py.custom_types import *
+from .py.custom_type import *
 from .py.math import *
 from .py.string import *
 from .py.list import *
 from .py.convert import *
 from .py.range import *
-from .py.configs import *
+from .py.config import *
 from .py.seed import *
 from .py.switch import *
 from .py.display import *
 from .py.loras import *
 from .py.prompt import *
 from .py.image import *
+from .py.sizes import *
 from .py.upscale import *
 from .py.checkpoint import *
+from .py.muter import *
 
 from .py.server.ae_server import *
 
@@ -53,8 +55,11 @@ NODE_CLASS_MAPPINGS = {
     "AE.SDXLPromptWithHires": SDXLPromptWithHires,
     "AE.LoadImageFromPath": LoadImageFromPath,
     "AE.SaveImage": CustomImageSave,
+    "AE.GetLatentSize": GetLatentSize,
+    "AE.GetImageSize": GetImageSize,
     "AE.UpscaleLatentBy": UpscaleLatentBy,
     "AE.CheckpointLoader": CustomCheckpointLoader,
+    "AE.GroupsMuter": GroupsMuter,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -94,8 +99,11 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
     "AE.LoadImageFromPath": "Load Image From Path",
     "AE.SaveImage": "Save Image",
+    "AE.GetLatentSize": "Latent Size",
+    "AE.GetImageSize": "Image Size",
     "AE.UpscaleLatentBy": "Upscale Latent By Model",
     "AE.CheckpointLoader": "Checkpoint Loader",
+    "AE.GroupsMuter": "Groups Muter",
 }
 
 WEB_DIRECTORY = "js"

@@ -1,9 +1,13 @@
-from .base import FlexibleOptionalInputType, any_type
+from .base import FlexibleOptionalInputType, any_type, is_blank
 
 def is_none(value):
+    if isinstance(value, str):
+        return is_blank(value)
+
     if value is not None:
         if isinstance(value, dict) and "model" in value and "clip" in value:
             return not value or all(v is None for v in value.values())
+
     return value is None
 
 class AnySwitch:
@@ -22,7 +26,7 @@ class AnySwitch:
     def switch(self, **kwargs):
         any_value = None
         for key, value in kwargs.items():
-            if key.startswith("any_") and not is_none(value):
+            if key.isdigit() and not is_none(value):
                 any_value = value
                 break
         return (any_value,)
