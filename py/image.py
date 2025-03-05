@@ -25,8 +25,8 @@ class ImageBlank:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "width": ("INT", {"default": 1024, "min": 8, "max": 4096, "step": 1}),
-                "height": ("INT", {"default": 1024, "min": 8, "max": 4096, "step": 1}),
+                "width": ("INT", {"default": 1024, "min": 64, "max": 4096, "step": 1}),
+                "height": ("INT", {"default": 1024, "min": 64, "max": 4096, "step": 1}),
                 "red": ("INT", {"default": 255, "min": 0, "max": 255, "step": 1}),
                 "green": ("INT", {"default": 255, "min": 0, "max": 255, "step": 1}),
                 "blue": ("INT", {"default": 255, "min": 0, "max": 255, "step": 1}),
@@ -54,7 +54,7 @@ class ImagePowerNoise:
                 "height": ("INT", {"default": 1024, "max": 4096, "min": 64, "step": 1}),
                 "attenuation": ("FLOAT", {"default": 0.5, "max": 10.0, "min": 0.0, "step": 0.01}),
                 "noise_type": (["grey", "white", "pink", "blue", "green", "mix"], {"default": "white"}),
-                "noise_value": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "value_seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             },
         }
 
@@ -63,8 +63,8 @@ class ImagePowerNoise:
     FUNCTION = "power_noise"
     CATEGORY = "AE.Tools/Image"
 
-    def power_noise(self, width, height, attenuation, noise_type, noise_value):
-        return (pil2tensor( self.generate_power_noise(width, height, attenuation, noise_type, noise_value) ), )
+    def power_noise(self, width, height, attenuation, noise_type, value_seed):
+        return (pil2tensor( self.generate_power_noise(width, height, attenuation, noise_type, value_seed) ), )
 
     def generate_power_noise(self, width, height, attenuation, noise_type, noise_seed):
         def white_noise(width, height):
@@ -1334,7 +1334,7 @@ class BRIARemBg:
         return {
             "required": {
                 "images": ("IMAGE",),
-            }
+            },
         }
 
     RETURN_TYPES = ("IMAGE", "MASK",)

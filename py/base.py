@@ -1,4 +1,5 @@
 import os
+import folder_paths
 
 class AnyType(str):
     def __ne__(self, __value: object) -> bool:
@@ -44,3 +45,19 @@ def extract_filename(filepath):
 
 def filter_non_empty_strings(strings):
     return [s for s in strings if s.strip()]
+
+def add_folder_path(folder_name: str, extensions_to_register: list):
+    path = os.path.join(folder_paths.models_dir, folder_name)
+    folders, extensions = folder_paths.folder_names_and_paths.get(folder_name, ([], set()))
+    
+    if path not in folders:
+        folders.append(path)
+    if isinstance(extensions, set):
+        extensions.update(extensions_to_register)
+    elif isinstance(extensions, list):
+        extensions.extend(extensions_to_register)
+    else:
+        e = f"Failed to register models/inpaint folder. Found existing value: {extensions}"
+        raise Exception(e)
+
+    folder_paths.folder_names_and_paths[folder_name] = (folders, extensions)

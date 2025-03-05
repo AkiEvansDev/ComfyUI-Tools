@@ -1,3 +1,5 @@
+from .py.base import add_folder_path
+
 from .py.custom_type import *
 from .py.math import *
 from .py.string import *
@@ -11,12 +13,15 @@ from .py.display import *
 from .py.loras import *
 from .py.prompt import *
 from .py.image import *
+from .py.inpaint import *
 from .py.sizes import *
 from .py.upscale import *
 from .py.checkpoint import *
 from .py.muter import *
 
 from .py.server.ae_server import *
+
+add_folder_path("inpaint", [".pt", ".pth", ".safetensors", ".patch"])
 
 NODE_CLASS_MAPPINGS = {
     "AE.Int": Int,
@@ -69,6 +74,8 @@ NODE_CLASS_MAPPINGS = {
     "AE.ImageBlendMask": ImageBlendMask,
     "AE.GaussianBlurMask": GaussianBlurMask,
     "AE.BRIARemBg": BRIARemBg,
+    "AE.LoadInpaintModel": LoadInpaintModel,
+    "AE.InpaintWithModel": InpaintWithModel,
     "AE.GetLatentSize": GetLatentSize,
     "AE.GetImageSize": GetImageSize,
     "AE.UpscaleLatentBy": UpscaleLatentBy,
@@ -127,6 +134,8 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.ImageBlendMask": "Image Blend Mask",
     "AE.GaussianBlurMask": "Gaussian Blur Mask",
     "AE.BRIARemBg": "BRIA Rem Bg",
+    "AE.LoadInpaintModel": "Load Inpaint Model",
+    "AE.InpaintWithModel": "Inpaint With Model",
     "AE.GetLatentSize": "Latent Size",
     "AE.GetImageSize": "Image Size",
     "AE.UpscaleLatentBy": "Upscale Latent By Model",
