@@ -331,14 +331,14 @@ class OutpaintConfigNode:
             "required": {
                 "use_hires_model": ("BOOLEAN", {"default": True}),
                 "model": (folder_paths.get_filename_list("inpaint"),),
-                "left": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
-                "top": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
-                "right": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
-                "bottom": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
-                "feathering": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
-                "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
                 "denoise": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "left": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
+                "top": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
+                "right": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
+                "bottom": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
+                "feathering": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
+                "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "use_control_net": ("BOOLEAN", {"default": False}),
                 "controlnet": (folder_paths.get_filename_list("controlnet"), ),
                 "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
@@ -355,7 +355,7 @@ class OutpaintConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, use_hires_model, model, left, top, right, bottom, feathering, noise_percentage, steps, denoise, use_control_net, controlnet, strength, start, end, base_config=None):
+    def get_value(self, use_hires_model, model, steps, denoise, left, top, right, bottom, feathering, noise_percentage, use_control_net, controlnet, strength, start, end, base_config=None):
         inpaint, = LoadInpaintModel().load(model)
         config = OutpaintConfig(model=inpaint, left=left, top=top, right=right, bottom=bottom,
                               feathering=feathering, noise_percentage=noise_percentage, 
