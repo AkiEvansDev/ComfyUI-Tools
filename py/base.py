@@ -1,9 +1,10 @@
 import os
 from symtable import SymbolTable
+import comfy.samplers
 import folder_paths
 
 class SamplerConfig:
-    def __init__(self, seed=0, sampler="", scheduler="", steps=30, cfg=5.0, denoise=1.0):
+    def __init__(self, seed=0, sampler=comfy.samplers.KSampler.SAMPLERS[0], scheduler=comfy.samplers.KSampler.SCHEDULERS[0], steps=30, cfg=5.0, denoise=1.0):
         self.seed = seed
         self.sampler = sampler
         self.scheduler = scheduler
@@ -136,7 +137,7 @@ class ControlNetConfig:
         return (f"(model={self.model}, strength={self.strength}, start={self.start}, end={self.end})")
 
 class SamplerConfigWithControlNet(SamplerConfig):
-    def __init__(self, controlnet=None, seed=0, sampler="", scheduler="", steps=30, cfg=5.0, denoise=1.0):
+    def __init__(self, controlnet=None, seed=0, sampler=comfy.samplers.KSampler.SAMPLERS[0], scheduler=comfy.samplers.KSampler.SCHEDULERS[0], steps=30, cfg=5.0, denoise=1.0):
         super().__init__(seed, sampler, scheduler, steps, cfg, denoise)
         self.controlnet = controlnet
 
@@ -152,7 +153,7 @@ class SamplerConfigWithControlNet(SamplerConfig):
         return (f"{self.controlnet} + {super().__str__()}")
 
 class HiresFixConfig(SamplerConfig):
-    def __init__(self, seed=0, sampler="", scheduler="", steps=15, cfg=5.0, denoise=0.4, scale=1.5):
+    def __init__(self, seed=0, sampler=comfy.samplers.KSampler.SAMPLERS[0], scheduler=comfy.samplers.KSampler.SCHEDULERS[0], steps=15, cfg=5.0, denoise=0.4, scale=1.5):
         super().__init__(seed, sampler, scheduler, steps, cfg, denoise)
         self.scale = scale
 
@@ -174,7 +175,7 @@ class HiresFixConfig(SamplerConfig):
         return (f"(scale={self.scale}) + {super().__str__()}")
 
 class Img2ImgFixConfig(SamplerConfigWithControlNet):
-    def __init__(self, seed=0, sampler="", scheduler="", steps=20, cfg=7.0, denoise=1.0, use_hires_model=True):
+    def __init__(self, seed=0, sampler=comfy.samplers.KSampler.SAMPLERS[0], scheduler=comfy.samplers.KSampler.SCHEDULERS[0], steps=20, cfg=7.0, denoise=1.0, use_hires_model=True):
         super().__init__(None, seed, sampler, scheduler, steps, cfg, denoise)
         self.use_hires_model = use_hires_model
 
@@ -199,7 +200,7 @@ class Img2ImgFixConfig(SamplerConfigWithControlNet):
         return (f"(use_hires_model={self.use_hires_model}) + {super().__str__()}")
 
 class OutpaintConfig(SamplerConfigWithControlNet):
-    def __init__(self, seed=0, sampler="", scheduler="", steps=30, cfg=5.0, denoise=0.6, model=None,
+    def __init__(self, seed=0, sampler=comfy.samplers.KSampler.SAMPLERS[0], scheduler=comfy.samplers.KSampler.SCHEDULERS[0], steps=30, cfg=5.0, denoise=0.6, model=None,
                  left=0, top=0, right=0, bottom=0, 
                  feathering=64, noise_percentage=0.1, use_hires_model=True):
         super().__init__(None, seed, sampler, scheduler, steps, cfg, denoise)

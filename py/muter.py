@@ -13,5 +13,5 @@ class GroupsMuter:
     CATEGORY = "AE.Tools"
 
     def get_value(self, hidden_text):
-        result = ", ".join(item.split(". ")[-1] for item in hidden_text.split(", "))
+        result = ", ".join(f"[{item.split('. ')[-1]}]" for item in hidden_text.split(", "))
         return (result,)

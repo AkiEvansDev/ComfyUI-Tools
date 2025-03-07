@@ -276,6 +276,7 @@ class CustomImageSave:
                 "save_prompt": ("BOOLEAN", {"default": False}),
             },
             "optional": {
+                "name": ("STRING", {"forceInput": True}),
                 "prompt": ("STRING", {"forceInput": True}),
             },
             "hidden": {
@@ -304,7 +305,8 @@ class CustomImageSave:
         lossless_webp,
         embed_workflow,
         save_prompt,
-        prompt="",
+        name=None,
+        prompt=None,
         workflow=None,
         extra_pnginfo=None,
     ):
@@ -312,6 +314,10 @@ class CustomImageSave:
 
         delimiter = filename_delimiter
         number_padding = filename_number_padding
+
+        if name:
+            filename_prefix = f"{name}{filename_delimiter}{filename_prefix}"
+
         filename_prefix = tokens.parseTokens(filename_prefix)
 
         if output_path in [None, "", "none", "."]:
@@ -408,7 +414,7 @@ class CustomImageSave:
                 else:
                     img.save(output_file, pnginfo=exif_data, optimize=optimize_image)
                 
-                if save_prompt and is_not_blank(prompt):
+                if save_prompt and prompt and is_not_blank(prompt):
                     with open(output_file + ".txt", "w", encoding="utf-8") as file:
                         file.write(prompt)
 

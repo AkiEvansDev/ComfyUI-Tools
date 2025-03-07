@@ -117,29 +117,30 @@ class ChangeSamplerConfig:
         sampler_config=None, hires_fix_config=None, img2img_config=None, outpaint_config=None, 
         seed_value=None, sampler=None, scheduler=None, steps=None, cfg=None, denoise=None
     ):
-        if sampler_config:
-            sampler_config = sampler_config.get_copy()
-        if hires_fix_config:
-            hires_fix_config = hires_fix_config.get_copy()
-        if img2img_config:
-            img2img_config = img2img_config.get_copy()
-        if outpaint_config:
-            outpaint_config = outpaint_config.get_copy()
+        if any(param is not None for param in [seed_value, sampler, scheduler, steps, cfg, denoise]):
+            if sampler_config:
+                sampler_config = sampler_config.get_copy()
+            if hires_fix_config:
+                hires_fix_config = hires_fix_config.get_copy()
+            if img2img_config:
+                img2img_config = img2img_config.get_copy()
+            if outpaint_config:
+                outpaint_config = outpaint_config.get_copy()
 
-        for config in [sampler_config, hires_fix_config, img2img_config, outpaint_config]:
-            if config:
-                if seed_value:
-                    config.seed = seed_value
-                if sampler:
-                    config.sampler = sampler
-                if scheduler:
-                    config.scheduler = scheduler
-                if steps:
-                    config.steps = steps
-                if cfg:
-                    config.cfg = cfg
-                if denoise:
-                    config.denoise = denoise
+            for config in [sampler_config, hires_fix_config, img2img_config, outpaint_config]:
+                if config:
+                    if seed_value:
+                        config.seed = seed_value
+                    if sampler:
+                        config.sampler = sampler
+                    if scheduler:
+                        config.scheduler = scheduler
+                    if steps:
+                        config.steps = steps
+                    if cfg:
+                        config.cfg = cfg
+                    if denoise:
+                        config.denoise = denoise
 
         return (sampler_config, hires_fix_config, img2img_config, outpaint_config,)
 
@@ -193,17 +194,17 @@ class SDXLConfigNode:
                     ], 
                     { "default": "1024 x 1024  (square)" }
                 ),
-                "batch": ("INT", {"default": 1, "min": 1, "max": 64}),
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-                "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
                 "seed_value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
                 "mode": (
                     ["fixed", "randomize", "increment", "decrement"], 
                     {"default": "fixed"}
                 ),
                 "even": ("BOOLEAN", {"default": False}),
+                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
+                "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
+                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
+                "batch": ("INT", {"default": 1, "min": 1, "max": 64}),
             },
             "hidden": {
                 "unique_id": "UNIQUE_ID",
@@ -215,7 +216,7 @@ class SDXLConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, dimensions, batch, sampler, scheduler, steps, cfg, seed_value, mode, even, unique_id):
+    def get_value(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, batch, unique_id):
         result = [x.strip() for x in dimensions.split("x")]
         width = int(result[0])
         height = int(result[1].split(" ")[0])
@@ -256,7 +257,6 @@ class HiresFixConfigNode:
             "required": {
                 "scale": ("FLOAT", {"default": 1.5, "min": 1.0, "max": 4.0, "step": 0.25}),
                 "steps": ("INT", {"default": 15, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
                 "denoise": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05}),
             },
             "optional": {
@@ -269,15 +269,16 @@ class HiresFixConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, scale, steps, cfg, denoise, base_config=None):
-        config = HiresFixConfig(scale=scale, steps=steps, cfg=cfg, denoise=denoise)
+    def get_value(self, scale, steps, denoise, base_config=None):
+        config = HiresFixConfig(scale=scale, steps=steps, denoise=denoise)
 
         if base_config:
             config.seed = base_config.seed
             config.sampler = base_config.sampler
             config.scheduler = base_config.scheduler
+            config.cfg = base_config.cfg
 
-        info = f"[HiresFix]\nScale: {scale}\nSteps: {steps}\nCfg: {cfg}\nDenoise: {denoise}"
+        info = f"[HiresFix]\nScale: {scale}\nSteps: {steps}\nDenoise: {denoise}"
 
         return (config, info,)
 
@@ -293,7 +294,6 @@ class Img2ImgConfigNode:
                 "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "steps": ("INT", {"default": 15, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
                 "denoise": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05}),
             },
             "optional": {
@@ -306,8 +306,8 @@ class Img2ImgConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, use_hires_model, use_control_net, controlnet, strength, start, end, steps, cfg, denoise, base_config=None):
-        config = Img2ImgFixConfig(steps=steps, cfg=cfg, denoise=denoise, use_hires_model=use_hires_model)
+    def get_value(self, use_hires_model, use_control_net, controlnet, strength, start, end, steps, denoise, base_config=None):
+        config = Img2ImgFixConfig(steps=steps, denoise=denoise, use_hires_model=use_hires_model)
         
         info = "None"
         if use_control_net:
@@ -318,8 +318,9 @@ class Img2ImgConfigNode:
             config.seed = base_config.seed
             config.sampler = base_config.sampler
             config.scheduler = base_config.scheduler
+            config.cfg = base_config.cfg
 
-        info = f"[Img2Img]\nUse Hires Model: {use_hires_model}\nControlNet: {info}\nSteps: {steps}\nCfg: {cfg}\nDenoise: {denoise}"
+        info = f"[Img2Img]\nUse Hires Model: {use_hires_model}\nControlNet: {info}\nSteps: {steps}\nDenoise: {denoise}"
 
         return (config, info,)
 
@@ -342,7 +343,6 @@ class OutpaintConfigNode:
                 "feathering": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
                 "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
                 "denoise": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.05}),
             },
             "optional": {
@@ -355,11 +355,11 @@ class OutpaintConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, use_hires_model, use_control_net, controlnet, strength, start, end, model, left, top, right, bottom, feathering, noise_percentage, steps, cfg, denoise, base_config=None):
+    def get_value(self, use_hires_model, use_control_net, controlnet, strength, start, end, model, left, top, right, bottom, feathering, noise_percentage, steps, denoise, base_config=None):
         inpaint, = LoadInpaintModel().load(model)
         config = OutpaintConfig(model=inpaint, left=left, top=top, right=right, bottom=bottom,
-                              feathering=feathering, noise_percentage=noise_percentage, use_hires_model=use_hires_model,
-                              steps=steps, cfg=cfg, denoise=denoise)
+                              feathering=feathering, noise_percentage=noise_percentage, 
+                              use_hires_model=use_hires_model, steps=steps, denoise=denoise)
 
         info = "None"
         if use_control_net:
@@ -370,8 +370,9 @@ class OutpaintConfigNode:
             config.seed = base_config.seed
             config.sampler = base_config.sampler
             config.scheduler = base_config.scheduler
+            config.cfg = base_config.cfg
 
         info = (f"[Outpaint]\nGeneral: {extract_filename(model)} [{left}, {top}, {right}, {bottom}] : {feathering} / {noise_percentage}\n"
-               f"Use Hires Model: {use_hires_model}\nControlNet: {info}\nSteps: {steps}\nCfg: {cfg}\nDenoise: {denoise}")
+               f"Use Hires Model: {use_hires_model}\nControlNet: {info}\nSteps: {steps}\nDenoise: {denoise}")
 
         return (config, info,)
