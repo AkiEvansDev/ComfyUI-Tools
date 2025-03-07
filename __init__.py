@@ -1,23 +1,26 @@
 from .py.base import add_folder_path
 
 from .py.custom_type import *
-from .py.math import *
 from .py.string import *
 from .py.list import *
-from .py.convert import *
-from .py.range import *
-from .py.config import *
 from .py.seed import *
+from .py.config import *
+from .py.math import *
+from .py.convert import *
+from .py.sizes import *
+from .py.range import *
 from .py.switch import *
+from .py.image import *
+from .py.muter import *
 from .py.display import *
+from .py.checkpoint import *
 from .py.loras import *
 from .py.prompt import *
-from .py.image import *
-from .py.inpaint import *
-from .py.sizes import *
+from .py.controlnet import *
+from .py.sampler import *
 from .py.upscale import *
-from .py.checkpoint import *
-from .py.muter import *
+from .py.inpaint import *
+from .py.outpaint import *
 
 from .py.server.ae_server import *
 
@@ -28,36 +31,55 @@ NODE_CLASS_MAPPINGS = {
     "AE.Float": Float,
     "AE.String": String,
     "AE.Text": Text,
-    "AE.MathInt": MathInt,
-    "AE.MathFloat": MathFloat,
-    "AE.CompareInt": CompareInt,
-    "AE.CompareFloat": CompareFloat,
+
     "AE.StringLength": StringLength,
     "AE.StringConcat": StringConcat,
     "AE.StringReplace": StringReplace,
     "AE.StringEquals": StringEquals,
     "AE.ToStringConcat": ToStringConcat,
+
     "AE.IntList": IntList,
     "AE.FloatList": FloatList,
     "AE.StringList": StringList,
+    
+    "AE.Seed": Seed,
+    
+    "AE.SamplerConfig": SamplerConfigNode,
+    "AE.SDXLConfig": SDXLConfigNode,
+    "AE.ControlNetConfig": ControlNetConfigNode,
+    "AE.HiresFixConfig": HiresFixConfigNode,
+    "AE.Img2ImgConfig": Img2ImgConfigNode,
+    "AE.OutpaintConfig": OutpaintConfigNode,
+
+    "AE.ChangeSamplerConfig": ChangeSamplerConfig,
+
+    "AE.ExtractSamplerConfig": ExtractSamplerConfig,
+    "AE.ExtractControlNetConfig": ExtractControlNetConfig,
+    "AE.ExtractHiresFixConfig": ExtractHiresFixConfig,
+    "AE.ExtractImg2ImgConfig": ExtractImg2ImgConfig,
+    "AE.ExtractOutpaintConfig": ExtractOutpaintConfig,
+
+    "AE.MathInt": MathInt,
+    "AE.MathFloat": MathFloat,
+    "AE.CompareInt": CompareInt,
+    "AE.CompareFloat": CompareFloat,
+    
     "AE.IntToFloat": IntToFloat,
     "AE.FloatToInt": FloatToInt,
     "AE.ToString": ToString,
+    
+    "AE.GetLatentSize": GetLatentSize,
+    "AE.GetImageSize": GetImageSize,
+
     "AE.Range": Range,
     "AE.XYRange": XYRange,
-    "AE.SDXLConfig": SDXLConfig,
-    "AE.SamplerConfig": SamplerConfig,
-    "AE.ControlNetConfig": ControlNetConfig,
-    "AE.Seed": Seed,
+
     "AE.AnySwitch": AnySwitch,
+    "AE.AnyTypeSwitch": AnyTypeSwitch,
     "AE.IntSwitch": IntSwitch,
     "AE.FloatSwitch": FloatSwitch,
     "AE.StringSwitch": StringSwitch,
-    "AE.DisplayAny": DisplayAny,
-    "AE.LorasLoader": LorasLoader,
-    "AE.LoraLoader": CustomLoraLoader,
-    "AE.SDXLPrompt": SDXLPrompt,
-    "AE.SDXLPromptWithHires": SDXLPromptWithHires,
+    
     "AE.ImageBlank": ImageBlank,
     "AE.ImagePowerNoise": ImagePowerNoise,
     "AE.LoadImageFromPath": LoadImageFromPath,
@@ -73,14 +95,36 @@ NODE_CLASS_MAPPINGS = {
     "AE.ImageBlendMode": ImageBlendMode,
     "AE.ImageBlendMask": ImageBlendMask,
     "AE.GaussianBlurMask": GaussianBlurMask,
-    "AE.BRIARemBg": BRIARemBg,
+    "AE.BRIARemBG": BRIARemBG,
+    "AE.BRIARemBGAdvanced": BRIARemBGAdvanced,
+
+    "AE.GroupsMuter": GroupsMuter,
+
+    "AE.DisplayAny": DisplayAny,
+    
+    "AE.CheckpointLoader": CustomCheckpointLoader,
+
+    "AE.LorasLoader": LorasLoader,
+    "AE.LoraLoader": CustomLoraLoader,
+
+    "AE.SDXLPrompt": SDXLPrompt,
+    "AE.SDXLPromptWithHires": SDXLPromptWithHires,
+    
+    "AE.ControlNetApplyWithConfig": ControlNetApplyWithConfig,
+
+    "AE.KSamplerWithConfig": KSamplerWithConfig,
+    "AE.KSamplerHiresFixWithConfig": KSamplerHiresFixWithConfig,
+    "AE.KSamplerImg2ImgWithConfig": KSamplerImg2ImgWithConfig,
+    "AE.KSamplerOutpaintWithConfig": KSamplerOutpaintWithConfig,
+
+    "AE.UpscaleLatentBy": UpscaleLatentBy,
+
     "AE.LoadInpaintModel": LoadInpaintModel,
     "AE.InpaintWithModel": InpaintWithModel,
-    "AE.GetLatentSize": GetLatentSize,
-    "AE.GetImageSize": GetImageSize,
-    "AE.UpscaleLatentBy": UpscaleLatentBy,
-    "AE.CheckpointLoader": CustomCheckpointLoader,
-    "AE.GroupsMuter": GroupsMuter,
+    "AE.VAEEncodeInpaintConditioning": VAEEncodeInpaintConditioning,
+
+    "AE.OutpaintWithModel": OutpaintWithModel,
+    "AE.OutpaintWithModelAndConfig": OutpaintWithModelAndConfig,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -88,36 +132,55 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.Float" : "Float Value",
     "AE.String" : "String Value",
     "AE.Text" : "Text Value",
-    "AE.MathInt": "Int Math",
-    "AE.MathFloat": "Float Math",
-    "AE.CompareInt": "Int Compare",
-    "AE.CompareFloat": "Float Compare",
+
     "AE.StringLength": "String Length",
     "AE.StringConcat": "String Concat",
     "AE.StringReplace": "String Replace",
     "AE.StringEquals": "String Equals",
     "AE.ToStringConcat": "To String Concat",
+
     "AE.IntList": "Int List",
     "AE.FloatList": "Float List",
     "AE.StringList": "String List",
+    
+    "AE.Seed" : "Seed Value",
+
+    "AE.SamplerConfig": "Sampler Config",
+    "AE.SDXLConfig": "SDXL Config",
+    "AE.ControlNetConfig": "ControlNet Config",
+    "AE.HiresFixConfig": "HiresFix Config",
+    "AE.Img2ImgConfig": "Img2Img Config",
+    "AE.OutpaintConfig": "Outpaint Config",
+
+    "AE.ChangeSamplerConfig": "Change Sampler Config",
+
+    "AE.ExtractSamplerConfig": "Extract Sampler Config",
+    "AE.ExtractControlNetConfig": "Extract ControlNet Config",
+    "AE.ExtractHiresFixConfig": "Extract HiresFix Config",
+    "AE.ExtractImg2ImgConfig": "Extract Img2Img Config",
+    "AE.ExtractOutpaintConfig": "Extract Outpaint Config",
+
+    "AE.MathInt": "Int Math",
+    "AE.MathFloat": "Float Math",
+    "AE.CompareInt": "Int Compare",
+    "AE.CompareFloat": "Float Compare",
+
     "AE.IntToFloat": "Int To Float",
     "AE.FloatToInt": "Float To Int",
     "AE.ToString": "To String",
+
+    "AE.GetLatentSize": "Latent Size",
+    "AE.GetImageSize": "Image Size",
+
     "AE.Range": "Range",
     "AE.XYRange": "XY Range",
-    "AE.SDXLConfig" : "SDXL Config",
-    "AE.SamplerConfig" : "Sampler Config",
-    "AE.ControlNetConfig" : "ControlNet Config",
-    "AE.Seed" : "Seed Value",
+    
     "AE.AnySwitch" : "Any Switch",
+    "AE.AnyTypeSwitch": "AnyType Switch",
     "AE.IntSwitch": "Int Switch",
     "AE.FloatSwitch": "Float Switch",
     "AE.StringSwitch": "String Switch",
-    "AE.DisplayAny": "Display Any",
-    "AE.LorasLoader": "Load Loras",
-    "AE.LoraLoader": "Load Lora",
-    "AE.SDXLPrompt": "SDXL Prompt",
-    "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
+
     "AE.ImageBlank": "Image Blank",
     "AE.ImagePowerNoise": "Image Power Noise",
     "AE.LoadImageFromPath": "Load Image From Path",
@@ -133,14 +196,36 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.ImageBlendMode": "Image Blend Mode",
     "AE.ImageBlendMask": "Image Blend Mask",
     "AE.GaussianBlurMask": "Gaussian Blur Mask",
-    "AE.BRIARemBg": "BRIA Rem Bg",
+    "AE.BRIARemBG": "BRIA Rem BG",
+    "AE.BRIARemBGAdvanced": "BRIA Rem BG Advanced",
+    
+    "AE.GroupsMuter": "Groups Muter",
+
+    "AE.DisplayAny": "Display Any",
+    
+    "AE.CheckpointLoader": "Load Checkpoint",
+
+    "AE.LorasLoader": "Load Loras",
+    "AE.LoraLoader": "Load Lora",
+
+    "AE.SDXLPrompt": "SDXL Prompt",
+    "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
+    
+    "AE.ControlNetApplyWithConfig": "ControlNet Apply With Config",
+
+    "AE.KSamplerWithConfig": "KSampler With Config",
+    "AE.KSamplerHiresFixWithConfig": "KSampler HiresFix With Config",
+    "AE.KSamplerImg2ImgWithConfig": "KSampler Img2Img With Config",
+    "AE.KSamplerOutpaintWithConfig": "KSampler Outpaint With Config",
+
+    "AE.UpscaleLatentBy": "Upscale Latent By Model",
+    
     "AE.LoadInpaintModel": "Load Inpaint Model",
     "AE.InpaintWithModel": "Inpaint With Model",
-    "AE.GetLatentSize": "Latent Size",
-    "AE.GetImageSize": "Image Size",
-    "AE.UpscaleLatentBy": "Upscale Latent By Model",
-    "AE.CheckpointLoader": "Load Checkpoint",
-    "AE.GroupsMuter": "Groups Muter",
+    "AE.VAEEncodeInpaintConditioning": "VAE Encode Inpaint Conditioning",
+
+    "AE.OutpaintWithModel": "Outpaint With Model",
+    "AE.OutpaintWithModelAndConfig": "Outpaint With Model And Config",
 }
 
 WEB_DIRECTORY = "js"

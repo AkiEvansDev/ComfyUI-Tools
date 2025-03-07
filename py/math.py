@@ -34,8 +34,8 @@ class MathFloat:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
-                "b": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "a": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "b": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "action": (
                     ["a + b", "a - b", "a * b", "a / b"], 
                     {"default": "a + b"}
@@ -100,8 +100,8 @@ class CompareFloat:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
-                "b": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "a": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "b": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "action": (
                     ["a < b", "a > b", "a == b", "a <= b", "a >= b"], 
                     {"default": "a < b"}

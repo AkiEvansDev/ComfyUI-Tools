@@ -34,7 +34,7 @@ app.registerExtension({
                 this.debouncerTempWidth = 0;
                 this.tempSize = null;
                 this.serialize_widgets = false;
-                this.widgets_start_y = 30;
+                this.widgets_start_y = 10;
                 this.properties[PROPERTY_MATCH_TITLE] = "";
                 this.properties[PROPERTY_SHOW_NAV] = true;
                 this.properties[PROPERTY_SORT] = "alphanumeric";

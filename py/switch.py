@@ -1,14 +1,4 @@
-from .base import FlexibleOptionalInputType, any_type, is_blank
-
-def is_none(value):
-    if isinstance(value, str):
-        return is_blank(value)
-
-    if value is not None:
-        if isinstance(value, dict) and "model" in value and "clip" in value:
-            return not value or all(v is None for v in value.values())
-
-    return value is None
+from .base import FlexibleOptionalInputType, any_type, is_none
 
 class AnySwitch:
     @classmethod
@@ -30,6 +20,25 @@ class AnySwitch:
                 any_value = value
                 break
         return (any_value,)
+
+class AnyTypeSwitch:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "a": (any_type,),
+                "b": (any_type,),
+                "condition": ("BOOLEAN", {"default": True}),
+            },
+        }
+
+    RETURN_TYPES = (any_type,)
+    RETURN_NAMES = ("*",)
+    FUNCTION = "switch"
+    CATEGORY = "AE.Tools/Switch"
+    
+    def switch(self, a, b, condition):
+        return (a if condition == True else b,)
 
 class IntSwitch:
     @classmethod
@@ -55,8 +64,8 @@ class FloatSwitch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
-                "b": ("FLOAT", {"default": 0.00, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "a": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "b": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "condition": ("BOOLEAN", {"default": True}),
             },
         }

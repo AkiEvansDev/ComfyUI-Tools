@@ -20,7 +20,7 @@ class Seed:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
+                "seed_value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
                 "mode": (
                     ["fixed", "randomize", "increment", "decrement"], 
                     {"default": "fixed"}
@@ -37,17 +37,17 @@ class Seed:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Type"
 
-    def get_value(self, value, mode, even, unique_id):
+    def get_value(self, seed_value, mode, even, unique_id):
         if mode == "randomize":
-            value = new_random_seed()
+            seed_value = new_random_seed()
         elif mode == "increment":
-            value = value + 1 if value < 9999999999999999 else value
+            seed_value = seed_value + 1 if seed_value < 9999999999999999 else seed_value
         elif mode == "decrement":
-            value = value - 1 if value > 0 else value
+            seed_value = seed_value - 1 if seed_value > 0 else seed_value
         
         if even:
-            value = int(str(value).translate(str.maketrans("13579", "24680")))
+            seed_value = int(str(seed_value).translate(str.maketrans("13579", "24680")))
 
-        PromptServer.instance.send_sync("ae-seed-node-feedback", {"node_id": unique_id, "seed": value})
+        PromptServer.instance.send_sync("ae-seed-node-feedback", {"node_id": unique_id, "seed": seed_value})
 
-        return (value,)
+        return (seed_value,)

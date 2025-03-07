@@ -1323,7 +1323,7 @@ class GaussianBlurMask:
 
         return blurred_mask
 
-class BRIARemBg:
+class BRIARemBG:
     def __init__(self):
         self.model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "model", "bria_rembg_v1.4.pth")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -1389,3 +1389,38 @@ class BRIARemBg:
         model_input_size = (1024, 1024)
         image = image.resize(model_input_size, Image.BILINEAR)
         return image
+
+class BRIARemBGAdvanced:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+                "iterations": ("INT", {"default": 14, "min": 1, "max": 16, "step": 1}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("images",)
+    FUNCTION = "remove_background"
+    CATEGORY = "AE.Tools/Image"
+  
+    def remove_background(self, images, iterations):
+        processed_images, = ImageLucySharpen().sharpen(images, iterations, 3)
+        processed_images, processed_masks, = BRIARemBG().remove_background(processed_images)
+
+        return self.join_image_with_alpha(images, processed_masks)
+
+    def join_image_with_alpha(self, image: torch.Tensor, alpha: torch.Tensor):
+        batch_size = min(len(image), len(alpha))
+        out_images = []
+
+        alpha = self.resize_mask(alpha, image.shape[1:])
+        for i in range(batch_size):
+           out_images.append(torch.cat((image[i][:,:,:3], alpha[i].unsqueeze(2)), dim=2))
+
+        return (torch.stack(out_images),)
+
+    def resize_mask(self, mask, shape):
+        return torch.nn.functional.interpolate(mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])), size=(shape[0], shape[1]), mode="bilinear").squeeze(1)
+

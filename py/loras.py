@@ -94,12 +94,12 @@ class LorasLoader:
     def load_loras(self, model, clip, **kwargs):
         names = ""
         
-        loader = LoraLoader();
+        loader = LoraLoader()
 
         for key, value in kwargs.items():
             key = key.upper()
             if not key.startswith("LORA_"):
-                continue;
+                continue
 
             if "on" in value and "lora" in value and "strength" in value:
                 strength_model = value["strength"]
@@ -123,7 +123,7 @@ class CustomLoraLoader:
                 "model": ("MODEL",),
                 "clip": ("CLIP",),
                 "lora": (folder_paths.get_filename_list("loras"), ),
-                "strength": ("FLOAT", {"default": 1.00, "min": -10.00, "max": 10.00, "step": 0.05}),
+                "strength": ("FLOAT", {"default": 1.0, "min": -10.0, "max": 10.0, "step": 0.05}),
             },
         }
 

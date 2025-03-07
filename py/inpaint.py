@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint
 from tqdm import trange
+from nodes import InpaintModelConditioning
 import comfy.utils
 from comfy.utils import ProgressBar
 from comfy.model_management import get_torch_device
@@ -2026,3 +2027,31 @@ class InpaintWithModel:
         model.cpu()
         result = torch.cat(batch_image, dim=0)
         return (to_comfy(result),)
+
+class VAEEncodeInpaintConditioning:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "positive": ("CONDITIONING",),
+                "negative": ("CONDITIONING",),
+                "image": ("IMAGE",),
+                "mask": ("MASK",),
+                "vae": ("VAE",),
+            }
+        }
+
+    RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "LATENT",)
+    RETURN_NAMES = ("positive", "negative", "latent",)
+    FUNCTION = "encode"
+    CATEGORY = "AE.Tools/Inpaint"
+
+    def encode(self, positive, negative, image, mask, vae):
+        inpaint_model_conditioning = InpaintModelConditioning()
+
+        try:
+            positive, negative, latent = inpaint_model_conditioning.encode(positive, negative, image, vae, mask, noise_mask=True)
+        except TypeError:
+            positive, negative, latent = inpaint_model_conditioning.encode(positive, negative, image, vae, mask)
+
+        return (positive, negative, latent,)
