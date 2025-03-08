@@ -4,7 +4,6 @@ from .base import FlexibleOptionalInputType, any_type, is_not_blank, extract_fil
 import comfy.samplers
 import folder_paths
 
-
 class IntList:
     @classmethod
     def INPUT_TYPES(s):
@@ -120,7 +119,7 @@ class SamplerList:
 
         index = index - 1
         lines = [key for key, value in kwargs.items() if value == True]
-        return (lines[index] if 0 <= index < len(lines) else "")
+        return (lines[index] if 0 <= index < len(lines) else "",)
 
 class SchedulerList:
     @classmethod
@@ -142,7 +141,7 @@ class SchedulerList:
 
         index = index - 1
         lines = [key for key, value in kwargs.items() if value == True]
-        return (lines[index] if 0 <= index < len(lines) else "")
+        return (lines[index] if 0 <= index < len(lines) else "",)
 
 class LorasList:
     @classmethod
