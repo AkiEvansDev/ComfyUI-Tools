@@ -3,7 +3,7 @@ import { removeUnusedInputsFromEnd } from "./base.js";
 
 function addAnyInput(node, num = 1) {
     for (let i = 0; i < num; i++) {
-        node.addInput(`${String(node.inputs.filter((i) => i.type == "*").length + 1).padStart(2, "0")}`, (node.nodeType || "*"));
+        node.addInput(`${String(node.inputs.filter((i) => i.type == "*").length + 1).padStart(2, "0")}`, "*");
     }
 }
 

@@ -71,6 +71,48 @@ api.addEventListener("ae-xyrange-node-feedback", aeXYRangeNodeFeedbackHandler);
 api.addEventListener("ae-range-node-update", aeRangeNodeUpdateHandler);
 api.addEventListener("ae-xyrange-node-update", aeXYRangeNodeUpdateHandler);
 
+
+function reset(type, node) {
+	if (type === "AE.Range") {
+		const current = node.widgets.find((w) => w.name === "current");
+		const start = node.widgets.find((w) => w.name === "start");
+
+		current.value = start.value - 1;
+	}
+	else if (type === "AE.XYRange") {
+		const x = node.widgets.find((w) => w.name === "x");
+		const startX = node.widgets.find((w) => w.name === "x_start");
+		const y = node.widgets.find((w) => w.name === "y");
+		const startY = node.widgets.find((w) => w.name === "y_start");
+
+		x.value = startX.value - 1;
+		y.value = startY.value - 1;
+	}
+}
+
+function queue(type, node) {
+	reset(type, node)
+
+	let batch_size = 0;
+
+	if (type === "AE.Range") {
+		const start = node.widgets.find((w) => w.name === "start");
+		const end = node.widgets.find((w) => w.name === "end");
+
+		batch_size = end.value - start.value + 1;
+	}
+	else if (type === "AE.XYRange") {
+		const startX = node.widgets.find((w) => w.name === "x_start");
+		const endX = node.widgets.find((w) => w.name === "x_end");
+		const startY = node.widgets.find((w) => w.name === "y_start");
+		const endY = node.widgets.find((w) => w.name === "y_end");
+
+		batch_size = (endX.value - startX.value + 1) * (endY.value - startY.value + 1);
+	}
+
+	app.queuePrompt(0, batch_size);
+}
+
 app.registerExtension({
     name: "AE.Range",
     async beforeRegisterNodeDef(nodeType, nodeData) {
@@ -80,42 +122,11 @@ app.registerExtension({
                 const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
 
 				this.addWidget("button", "Queue Full", "QueueButton", (source, canvas, node, pos, event) => {
-					let batch_size = 0;
-
-					if (nodeData.name === "AE.Range") {
-						const start = node.widgets.find((w) => w.name === "start");
-						const end = node.widgets.find((w) => w.name === "end");
-
-						batch_size = end.value - start.value + 1;
-					}
-					else if (nodeData.name === "AE.XYRange") {
-						const startX = node.widgets.find((w) => w.name === "x_start");
-						const endX = node.widgets.find((w) => w.name === "x_end");
-						const startY = node.widgets.find((w) => w.name === "y_start");
-						const endY = node.widgets.find((w) => w.name === "y_end");
-
-						batch_size = (endX.value - startX.value + 1) * (endY.value - startY.value + 1);
-					}
-
-					app.queuePrompt(0, batch_size);
+					queue(nodeData.name, node);
 				});
 
 				this.addWidget("button", "Reset Range", "ResetButton", (source, canvas, node, pos, event) => {
-					if (nodeData.name === "AE.Range") {
-						const current = node.widgets.find((w) => w.name === "current");
-						const start = node.widgets.find((w) => w.name === "start");
-
-						current.value = start.value - 1;
-					}
-					else if (nodeData.name === "AE.XYRange") {
-						const x = node.widgets.find((w) => w.name === "x");
-						const startX = node.widgets.find((w) => w.name === "x_start");
-						const y = node.widgets.find((w) => w.name === "y");
-						const startY = node.widgets.find((w) => w.name === "y_start");
-
-						x.value = startX.value - 1;
-						y.value = startY.value - 1;
-					}
+					reset(nodeData.name, node);
 				});
             };
 		}

@@ -41,6 +41,10 @@ NODE_CLASS_MAPPINGS = {
     "AE.IntList": IntList,
     "AE.FloatList": FloatList,
     "AE.StringList": StringList,
+    "AE.CheckpointList": CheckpointList,
+    "AE.SamplerList": SamplerList,
+    "AE.SchedulerList": SchedulerList,
+    "AE.LorasList": LorasList,
     
     "AE.Seed": Seed,
     
@@ -142,6 +146,10 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.IntList": "Int List",
     "AE.FloatList": "Float List",
     "AE.StringList": "String List",
+    "AE.CheckpointList": "Checkpoint List",
+    "AE.SamplerList": "Sampler List",
+    "AE.SchedulerList": "Scheduler List",
+    "AE.LorasList": "Loras List",
     
     "AE.Seed" : "Seed Value",
 

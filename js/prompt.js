@@ -8,7 +8,7 @@ app.registerExtension({
             nodeType.prototype.onNodeCreated = function () {
                 const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
 
-                const targetNames = ["prompt", "posture", "background", "style", "negative", "negative_style"];
+                const targetNames = ["positive", "posture", "background", "positive_style", "negative", "negative_style"];
 
                 targetNames.forEach((name) => {
                     const widget = this.widgets.find((w) => w.name === name);

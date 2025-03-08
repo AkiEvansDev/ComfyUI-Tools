@@ -70,6 +70,7 @@ function addNonLoraWidgets(node) {
             }, null, [...loras]);
         });
     });
+    moveArrayItem(node.widgets, node.addLoraWidget, node.widgets.length - 1);
 }
 
 class LoraLoaderWidget extends BaseWidget {
@@ -307,14 +308,21 @@ class LoraLoaderWidget extends BaseWidget {
 app.registerExtension({
     name: "AE.LorasLoader",
     async beforeRegisterNodeDef(nodeType, nodeData) {
-        if (nodeData.name === "AE.LorasLoader") {
+        if (nodeData.name === "AE.LorasLoader" || nodeData.name === "AE.LorasList") {
             const onConfigure = nodeType.prototype.onConfigure;
             nodeType.prototype.onConfigure = function (info) {
                 const r = onConfigure ? onConfigure.apply(this, info) : undefined;
 
                 var _b;
-                while ((_b = this.widgets) === null || _b === void 0 ? void 0 : _b.length)
-                    removeWidget(this, 0);
+                while ((_b = this.widgets) === null || _b === void 0 ? void 0 : _b.length) {
+                    if (nodeData.name === "AE.LorasList") {
+                        if (_b.length == 1)
+                            break;
+                        removeWidget(this, 1);
+                    }
+                    else
+                        removeWidget(this, 0);
+                }
 
                 this.addLoraWidget = null;
                 this._tempWidth = this.size[0];

@@ -40,6 +40,10 @@ class Range:
 
         return (current,)
 
+    @classmethod
+    def IS_CHANGED(self, current, start, end, unique_id):
+        return float("NaN")
+
 class XYRange:
     @classmethod
     def INPUT_TYPES(cls):
@@ -92,3 +96,7 @@ class XYRange:
         PromptServer.instance.send_sync("ae-xyrange-node-feedback", {"node_id": unique_id, "x": x, "y": y})
 
         return (x, y,)
+
+    @classmethod
+    def IS_CHANGED(self, x, y, x_start, x_end, y_start, y_end, unique_id):
+        return float("NaN")
