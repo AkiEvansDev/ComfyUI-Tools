@@ -19,6 +19,14 @@ class AeApi {
         }
         return this.getLorasPromise;
     }
+    async resetNode(id) {
+        let req_url = "/reset/" + id.toString();
+        const r = await this.fetchApi(req_url, { method: "POST" });
+
+        if (r.status != 200) {
+            console.error("Failed to reset node!");
+        }
+    }
 }
 
 export const aeApi = new AeApi();

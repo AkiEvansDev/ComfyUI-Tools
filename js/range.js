@@ -1,78 +1,55 @@
 import { app } from "../../scripts/app.js";
-import { api } from "../../scripts/api.js";
+import { aeApi } from "./api.js"
 
-function aeRangeNodeFeedbackHandler(event) {
-	let nodes = app.graph._nodes_by_id;
-	let node = nodes[event.detail.node_id];
+function aeRangeNodeUpdate(node, pos, range) {
 	if (node) {
 		const widget = node.widgets.find((w) => w.name === "current");
 		if (widget) {
-			widget.value = event.detail.current;
+			widget.value = pos[0];
 		}
-	}
-}
-
-function aeXYRangeNodeFeedbackHandler(event) {
-	let nodes = app.graph._nodes_by_id;
-	let node = nodes[event.detail.node_id];
-	if (node) {
-		const widgetX = node.widgets.find((w) => w.name === "x");
-		if (widgetX) {
-			widgetX.value = event.detail.x;
-		}
-		const widgetY = node.widgets.find((w) => w.name === "y");
-		if (widgetY) {
-			widgetY.value = event.detail.y;
-		}
-	}
-}
-
-function aeRangeNodeUpdateHandler(event) {
-	let nodes = app.graph._nodes_by_id;
-	let node = nodes[event.detail.node_id];
-	if (node) {
 		const widgetStart = node.widgets.find((w) => w.name === "start");
 		if (widgetStart) {
-			widgetStart.value = event.detail.start;
+			widgetStart.value = range[0];
 		}
 		const widgetEnd = node.widgets.find((w) => w.name === "end");
 		if (widgetEnd) {
-			widgetEnd.value = event.detail.end;
+			widgetEnd.value = range[1];
 		}
 	}
 }
 
-function aeXYRangeNodeUpdateHandler(event) {
-	let nodes = app.graph._nodes_by_id;
-	let node = nodes[event.detail.node_id];
+function aeXYRangeNodeUpdate(node, pos, range) {
 	if (node) {
+		const widgetX = node.widgets.find((w) => w.name === "x");
+		if (widgetX) {
+			widgetX.value = pos[0];
+		}
+		const widgetY = node.widgets.find((w) => w.name === "y");
+		if (widgetY) {
+			widgetY.value = pos[1];
+		}
 		const widgetStartX = node.widgets.find((w) => w.name === "x_start");
 		if (widgetStartX) {
-			widgetStartX.value = event.detail.x_start;
+			widgetStartX.value = range[0];
 		}
 		const widgetEndX = node.widgets.find((w) => w.name === "x_end");
 		if (widgetEndX) {
-			widgetEndX.value = event.detail.x_end;
+			widgetEndX.value = range[1];
 		}
 		const widgetStartY = node.widgets.find((w) => w.name === "y_start");
 		if (widgetStartY) {
-			widgetStartY.value = event.detail.y_start;
+			widgetStartY.value = range[2];
 		}
 		const widgetEndY = node.widgets.find((w) => w.name === "y_end");
 		if (widgetEndY) {
-			widgetEndY.value = event.detail.y_end;
+			widgetEndY.value = range[3];
 		}
 	}
 }
 
-api.addEventListener("ae-range-node-feedback", aeRangeNodeFeedbackHandler);
-api.addEventListener("ae-xyrange-node-feedback", aeXYRangeNodeFeedbackHandler);
-
-api.addEventListener("ae-range-node-update", aeRangeNodeUpdateHandler);
-api.addEventListener("ae-xyrange-node-update", aeXYRangeNodeUpdateHandler);
-
-
 function reset(type, node) {
+	aeApi.resetNode(node.id);
+
 	if (type === "AE.Range") {
 		const current = node.widgets.find((w) => w.name === "current");
 		const start = node.widgets.find((w) => w.name === "start");
@@ -119,7 +96,33 @@ app.registerExtension({
 		if (nodeData.name === "AE.Range" || nodeData.name === "AE.XYRange") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
-                const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
+				const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
+
+				if (nodeData.name === "AE.Range") {
+					const widget = this.widgets.find((w) => w.name === "current");
+					if (widget) {
+						widget.node = this;
+						widget.callback = function (v) {
+							aeApi.resetNode(this.node.id);
+						};
+					}
+				}
+				else if (nodeData.name === "AE.XYRange") {
+					const widgetX = this.widgets.find((w) => w.name === "x");
+					if (widgetX) {
+						widgetX.node = this;
+						widgetX.callback = function (v) {
+							aeApi.resetNode(this.node.id);
+						};
+					}
+					const widgetY = this.widgets.find((w) => w.name === "y");
+					if (widgetY) {
+						widgetY.node = this;
+						widgetY.callback = function (v) {
+							aeApi.resetNode(this.node.id);
+						};
+					}
+				}
 
 				this.addWidget("button", "Queue Full", "QueueButton", (source, canvas, node, pos, event) => {
 					queue(nodeData.name, node);
@@ -128,7 +131,19 @@ app.registerExtension({
 				this.addWidget("button", "Reset Range", "ResetButton", (source, canvas, node, pos, event) => {
 					reset(nodeData.name, node);
 				});
-            };
+			};
+
+			const onExecuted = nodeType.prototype.onExecuted;
+			nodeType.prototype.onExecuted = function ({ pos, range }) {
+				const r = onExecuted ? onExecuted.apply(this, arguments) : undefined;
+
+				if (nodeData.name === "AE.Range") {
+					aeRangeNodeUpdate(this, pos, range);
+				}
+				else if (nodeData.name === "AE.XYRange") {
+					aeXYRangeNodeUpdate(this, pos, range);
+				}
+			};
 		}
     },
 });

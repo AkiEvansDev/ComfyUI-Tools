@@ -145,6 +145,12 @@ class ChangeSamplerConfig:
         return (sampler_config, hires_fix_config, img2img_config, outpaint_config,)
 
 class SamplerConfigNode:
+    def __init__(self):
+        self.seed = Seed()
+
+    def __del__(self):
+        del self.seed
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -172,10 +178,23 @@ class SamplerConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, sampler, scheduler, steps, cfg, denoise, seed_value, mode, even, unique_id):
-        seed, = Seed().get_value(seed_value, mode, even, unique_id)
-        return (SamplerConfig(seed=seed, sampler=sampler, scheduler=scheduler, steps=steps, cfg=cfg, denoise=denoise),)
+        result = self.seed.get_value(seed_value, mode, even, unique_id)
+        result["result"] = (SamplerConfig(seed=result["result"][0], sampler=sampler, scheduler=scheduler, steps=steps, cfg=cfg, denoise=denoise),)
+        return result
+
+    @classmethod
+    def IS_CHANGED(self, sampler, scheduler, steps, cfg, denoise, seed_value, mode, even, unique_id):
+        if mode == "fixed":
+            return 0
+        return float("NaN")
 
 class SDXLConfigNode:
+    def __init__(self):
+        self.sampler_config = SamplerConfigNode()
+
+    def __del__(self):
+        del self.sampler_config
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -222,11 +241,18 @@ class SDXLConfigNode:
         height = int(result[1].split(" ")[0])
         
         latent, = EmptyLatentImage().generate(width, height, batch)
-        config, = SamplerConfigNode().get_value(sampler, scheduler, steps, cfg, 1.0, seed_value, mode, even, unique_id)
+        result = self.sampler_config.get_value(sampler, scheduler, steps, cfg, 1.0, seed_value, mode, even, unique_id)
 
-        info = f"[Generate]\nDimensions: {width}x{height}\nSeed: {seed_value}\nSampler: {sampler}\nScheduler: {scheduler}\nSteps: {steps}\nCfg: {cfg}"
+        info = f"[Generate]\nDimensions: {width}x{height}\nSeed: {result['result'][0].seed}\nSampler: {sampler}\nScheduler: {scheduler}\nSteps: {steps}\nCfg: {cfg}"
 
-        return (latent, config, info,)
+        result["result"] = (latent, result["result"][0], info,)
+        return result
+
+    @classmethod
+    def IS_CHANGED(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, batch, unique_id):
+        if mode == "fixed":
+            return 0
+        return float("NaN")
 
 class ControlNetConfigNode:
     @classmethod
