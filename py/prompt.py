@@ -78,7 +78,7 @@ def process_brackets(text):
         processed_tags = []
         for tag in tags_list:
             tag = tag.strip()
-            coefficient = round(1.1 ** brackets, 2)
+            coefficient = round(1.1 ** brackets, 4)
             processed_tags.append(f"({tag}:{coefficient})")
 
         return separator.join(processed_tags)
@@ -96,7 +96,7 @@ def process_brackets(text):
         processed_tags = []
         for tag in tags_list:
             tag = tag.strip()
-            coefficient = round(0.9 ** brackets, 2)
+            coefficient = round(0.9 ** brackets, 4)
             processed_tags.append(f"({tag}:{coefficient})")
 
         return separator.join(processed_tags)
