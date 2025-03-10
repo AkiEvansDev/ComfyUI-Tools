@@ -1,3 +1,4 @@
+from server import PromptServer
 from .server.ae_server import reset_registry
 
 class Range:
@@ -55,7 +56,9 @@ class Range:
                 
         self._current = current
 
-        return {"ui": {"pos": [current], "range": [start, end]}, "result": (current,)}
+        PromptServer.instance.send_sync("ae-range-node-feedback", {"node_id": unique_id, "current": current, "start": start, "end": end})
+
+        return (current,)
 
     @classmethod
     def IS_CHANGED(self, current, start, end, unique_id):
@@ -132,8 +135,10 @@ class XYRange:
 
         self._x = x
         self._y = y
+        
+        PromptServer.instance.send_sync("ae-xy-range-node-feedback", {"node_id": unique_id, "x": x, "y": y, "x_start": x_start, "x_end": x_end, "y_start": y_start, "y_end": y_end})
 
-        return {"ui": {"pos": [x, y], "range": [x_start, x_end, y_start, y_end]}, "result": (x, y,)}
+        return (x, y,)
 
     @classmethod
     def IS_CHANGED(selff, x, y, x_start, x_end, y_start, y_end, unique_id):

@@ -206,7 +206,7 @@ class UpscaleLatentBy:
         return {
             "required": {
                 "latent": ("LATENT",),
-                "scale_by": ("FLOAT", {"default": 1.5, "min": 1.0, "max": 4.0, "step": 0.25}),
+                "scale_by": ("FLOAT", {"default": 1.5, "min": 1, "max": 4, "step": 0.25}),
             },
         }
 

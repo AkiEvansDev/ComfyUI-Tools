@@ -20,7 +20,7 @@ class OutpaintWithModel:
                 "right": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
                 "bottom": ("INT", {"default": 0, "min": 0, "max": 1024, "step": 8}),
                 "feathering": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
-                "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.1, "max": 1.0, "step": 0.01}),
                 "vae": ("VAE",),
                 "value_seed": ("INT", {"default": 0, "min": 0, "max": 0xFFFFFFFFFFFFFFFF}),
             },

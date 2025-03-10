@@ -64,8 +64,8 @@ class FloatSwitch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "a": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
-                "b": ("FLOAT", {"default": 0.0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "a": ("FLOAT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
+                "b": ("FLOAT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff, "step": 0.05}),
                 "condition": ("BOOLEAN", {"default": True}),
             },
         }

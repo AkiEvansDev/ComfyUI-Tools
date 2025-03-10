@@ -640,13 +640,13 @@ class ImageAdjustment:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "brightness": ("FLOAT", {"default": 0.0, "min": -1.0, "max": 1.0, "step": 0.01}),
-                "contrast": ("FLOAT", {"default": 1.0, "min": -1.0, "max": 2.0, "step": 0.01}),
-                "saturation": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 5.0, "step": 0.01}),
-                "sharpness": ("FLOAT", {"default": 1.0, "min": -5.0, "max": 5.0, "step": 0.01}),
+                "brightness": ("FLOAT", {"default": 0, "min": -1, "max": 1, "step": 0.01}),
+                "contrast": ("FLOAT", {"default": 1, "min": -1, "max": 2, "step": 0.01}),
+                "saturation": ("FLOAT", {"default": 1, "min": 0, "max": 5, "step": 0.01}),
+                "sharpness": ("FLOAT", {"default": 1, "min": -5, "max": 5, "step": 0.01}),
                 "blur": ("INT", {"default": 0, "min": 0, "max": 16, "step": 1}),
-                "gaussian_blur": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1024.0, "step": 0.1}),
-                "edge_enhance": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "gaussian_blur": ("FLOAT", {"default": 0, "min": 0, "max": 1024, "step": 0.1}),
+                "edge_enhance": ("FLOAT", {"default": 0, "min": 0, "max": 1, "step": 0.01}),
                 "detail_enhance": ("BOOLEAN", {"default": True}),
             },
         }
@@ -914,7 +914,7 @@ class ImageHighPassFilter:
             "required": {
                 "images": ("IMAGE",),
                 "radius": ("INT", {"default": 10, "min": 1, "max": 500, "step": 1}),
-                "strength": ("FLOAT", {"default": 1.5, "min": 0.0, "max": 255.0, "step": 0.1}),
+                "strength": ("FLOAT", {"default": 1.5, "min": 0, "max": 255, "step": 0.1}),
                 "color_output": ("BOOLEAN", {"default": True}),
                 "neutral_background": ("BOOLEAN", {"default": True}),
             }
@@ -958,9 +958,9 @@ class ImageLevels:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "black_level": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 255.0, "step": 0.1}),
-                "mid_level": ("FLOAT", {"default": 127.5, "min": 0.0, "max": 255.0, "step": 0.1}),
-                "white_level": ("FLOAT", {"default": 255, "min": 0.0, "max": 255.0, "step": 0.1}),
+                "black_level": ("FLOAT", {"default": 0, "min": 0, "max": 255, "step": 0.1}),
+                "mid_level": ("FLOAT", {"default": 127.5, "min": 0, "max": 255, "step": 0.1}),
+                "white_level": ("FLOAT", {"default": 255, "min": 0, "max": 255, "step": 0.1}),
             }
         }
     RETURN_TYPES = ("IMAGE",)
@@ -1074,13 +1074,13 @@ class ImageDragonFilter:
         return {
             "required": {
                 "images": ("IMAGE",),
-                "saturation": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 16.0, "step": 0.01}),
-                "contrast": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 16.0, "step": 0.01}),
-                "brightness": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 16.0, "step": 0.01}),
-                "sharpness": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 6.0, "step": 0.01}),
+                "saturation": ("FLOAT", {"default": 1, "min": 0, "max": 16, "step": 0.01}),
+                "contrast": ("FLOAT", {"default": 1, "min": 0, "max": 16, "step": 0.01}),
+                "brightness": ("FLOAT", {"default": 1, "min": 0, "max": 16, "step": 0.01}),
+                "sharpness": ("FLOAT", {"default": 1, "min": 0, "max": 6, "step": 0.01}),
                 "highpass_samples": ("INT", {"default": 1, "min": 0, "max": 6, "step": 1}),
-                "highpass_strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 3.0, "step": 0.01}),
-                "highpass_radius": ("FLOAT", {"default": 6.0, "min": 0.0, "max": 255.0, "step": 0.01}),
+                "highpass_strength": ("FLOAT", {"default": 1, "min": 0, "max": 3, "step": 0.01}),
+                "highpass_radius": ("FLOAT", {"default": 6, "min": 0, "max": 255, "step": 0.01}),
                 "colorize": ("BOOLEAN", {"default": True}),
             },
         }
@@ -1168,7 +1168,7 @@ class ImageBlendMode:
                     "screen",
                     "soft_light"
                 ], {"default": "color"}),
-                "blend_percentage": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "blend_percentage": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.01}),
             },
         }
 
@@ -1233,7 +1233,7 @@ class ImageBlendMask:
                 "image_a": ("IMAGE",),
                 "image_b": ("IMAGE",),
                 "mask": ("MASK",),
-                "blend_percentage": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "blend_percentage": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.01}),
             },
         }
 
@@ -1266,7 +1266,7 @@ class GaussianBlurMask:
             "required": {
                 "mask": ("MASK", ),
                 "kernel_size": ("INT", {"default": 10, "min": 0, "max": 100, "step": 1}),
-                "sigma": ("FLOAT", {"default": 10.0, "min": 0.1, "max": 100.0, "step": 0.1}),
+                "sigma": ("FLOAT", {"default": 10, "min": 0.1, "max": 100, "step": 0.1}),
             },
         }
 

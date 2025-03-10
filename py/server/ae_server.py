@@ -17,7 +17,7 @@ async def get_autocomplete(request):
 
 @PromptServer.instance.routes.get("/ae/loras")
 async def get_loras(request):
-    loras = folder_paths.get_filename_list("loras")
+    loras = [os.path.splitext(path)[0] for path in folder_paths.get_filename_list("loras")]
     return web.json_response(list(loras))
 
 @PromptServer.instance.routes.get("/ae/reboot")
@@ -53,7 +53,7 @@ def restart(request):
     return os.execv(sys.executable, cmds)
 
 @PromptServer.instance.routes.post("/ae/reset/{node_id}")
-async def get_autocomplete(request):
+async def reset(request):
     try:
         node_id = request.match_info["node_id"]
         print(reset_registry[node_id])

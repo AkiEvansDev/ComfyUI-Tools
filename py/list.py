@@ -1,8 +1,9 @@
 from .checkpoint import CustomCheckpointLoader
-from .loras import CustomLoraLoader, get_lora_by_filename
-from .base import FlexibleOptionalInputType, any_type, is_not_blank, extract_filename
+from .loras import CustomLoraLoader
+from .base import FlexibleOptionalInputType, any_type, get_path_by_filename
 import comfy.samplers
 import folder_paths
+import os
 
 class IntList:
     @classmethod
@@ -78,7 +79,7 @@ class CheckpointList:
     def INPUT_TYPES(s):
         required = {}
         required["index"] = ("INT", {"default": 1, "min": 1, "max": 99})
-        for name in folder_paths.get_filename_list("checkpoints"):
+        for name in [os.path.splitext(path)[0] for path in folder_paths.get_filename_list("checkpoints")]:
             required[name] = ("BOOLEAN", {"default": True})
         return {"required": required}
 
@@ -179,6 +180,6 @@ class LorasList:
                     values.append(value)
 
         if 0 <= index < len(values):
-            return CustomLoraLoader().load_lora(model, clip, get_lora_by_filename(values[index]["lora"]), values[index]["strength"])
+            return CustomLoraLoader().load_lora(model, clip, get_path_by_filename(values[index]["lora"], "loras"), values[index]["strength"])
 
         return (model, clip, "None",)

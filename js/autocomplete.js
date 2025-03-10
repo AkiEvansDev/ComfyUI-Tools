@@ -424,19 +424,13 @@ export class TextAreaAutoComplete {
 	static lorasEnabled = false;
 	static suggestionCount = 20;
 
-	/** @type {Record<string, Record<string, AutoCompleteEntry>>} */
 	static groups = {};
-	/** @type {Set<string>} */
 	static globalGroups = new Set();
-	/** @type {Record<string, AutoCompleteEntry>} */
 	static globalWords = {};
-	/** @type {Record<string, AutoCompleteEntry>} */
 	static globalWordsExclLoras = {};
 
-	/** @type {HTMLTextAreaElement} */
 	el;
 
-	/** @type {Record<string, AutoCompleteEntry>} */
 	overrideWords;
 	overrideSeparator = "";
 
@@ -448,9 +442,6 @@ export class TextAreaAutoComplete {
 		return this.overrideSeparator ?? TextAreaAutoComplete.globalSeparator;
 	}
 
-	/**
-	 * @param {HTMLTextAreaElement} el
-	 */
 	constructor(el, words = null, separator = null) {
 		this.el = el;
 		this.helper = new TextAreaCaretHelper(el, () => app.canvas.ds.scale);
@@ -469,14 +460,10 @@ export class TextAreaAutoComplete {
 		this.el.addEventListener("blur", () => setTimeout(() => this.#hide(), 150));
 	}
 
-	/**
-	 * @param {KeyboardEvent} e
-	 */
 	#keyDown(e) {
 		if (!TextAreaAutoComplete.enabled) return;
 
 		if (this.dropdown.parentElement) {
-			// We are visible
 			switch (e.key) {
 				case "ArrowUp":
 					e.preventDefault();
@@ -504,13 +491,9 @@ export class TextAreaAutoComplete {
 		}
 	}
 
-	/**
-	 * @param {KeyboardEvent} e
-	 */
 	#keyPress(e) {
 		if (!TextAreaAutoComplete.enabled) return;
 		if (this.dropdown.parentElement) {
-			// We are visible
 			switch (e.key) {
 				case "Enter":
 					if (!e.ctrlKey) {
@@ -531,7 +514,6 @@ export class TextAreaAutoComplete {
 	#keyUp(e) {
 		if (!TextAreaAutoComplete.enabled) return;
 		if (this.dropdown.parentElement) {
-			// We are visible
 			switch (e.key) {
 				case "Escape":
 					e.preventDefault();
@@ -601,7 +583,7 @@ export class TextAreaAutoComplete {
 	#update() {
 		let before = this.helper.getBeforeCursor();
 		if (before?.length) {
-			const m = before.match(/([^,;"|{}()\n]+)$/);
+			const m = before.match(/([^,;"|{}()\[\]\n+]+)$/);
 			if (m) {
 				before = m[0]
 					.replace(/^\s+/, "")
@@ -762,244 +744,11 @@ app.registerExtension({
 			const r = STRING.apply(this, arguments);
 
 			if (inputData[1]?.multiline) {
-				const config = inputData[1]?.["ae.autocomplete"];
-				if (config === false)
-					return r;
-
-				let words;
-				let separator;
-				if (typeof config === "object") {
-					separator = config.separator;
-					words = {};
-					if (config.words) {
-						Object.assign(words, TextAreaAutoComplete.groups[node.comfyClass + "." + inputName] ?? {});
-					}
-
-					for (const item of config.groups ?? []) {
-						if (item === "*") {
-							Object.assign(words, TextAreaAutoComplete.globalWords);
-						} else {
-							Object.assign(words, TextAreaAutoComplete.groups[item] ?? {});
-						}
-					}
-				}
-
-				new TextAreaAutoComplete(r.widget.inputEl, words, separator);
+				new TextAreaAutoComplete(r.widget.inputEl);
 			}
 
 			return r;
 		};
-
-		//TextAreaAutoComplete.globalSeparator = localStorage.getItem(id + ".AutoSeparate") ?? ", ";
-		//const enabledSetting = app.ui.settings.addSetting({
-		//	id,
-		//	name: "Text Autocomplete",
-		//	defaultValue: true,
-		//	type: (name, setter, value) => {
-		//		return $el("tr", [
-		//			$el("td", [
-		//				$el("label", {
-		//					for: id.replaceAll(".", "-"),
-		//					textContent: name,
-		//				}),
-		//			]),
-		//			$el("td", [
-		//				$el(
-		//					"label",
-		//					{
-		//						textContent: "Enabled ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el("input", {
-		//							id: id.replaceAll(".", "-"),
-		//							type: "checkbox",
-		//							checked: value,
-		//							onchange: (event) => {
-		//								const checked = !!event.target.checked;
-		//								TextAreaAutoComplete.enabled = checked;
-		//								setter(checked);
-		//							},
-		//						}),
-		//					]
-		//				),
-		//				$el(
-		//					"label.comfy-tooltip-indicator",
-		//					{
-		//						title: "This requires other ComfyUI nodes/extensions that support using LoRAs in the prompt.",
-		//						textContent: "Loras enabled ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el("input", {
-		//							type: "checkbox",
-		//							checked: !!TextAreaAutoComplete.lorasEnabled,
-		//							onchange: (event) => {
-		//								const checked = !!event.target.checked;
-		//								TextAreaAutoComplete.lorasEnabled = checked;
-		//								toggleLoras();
-		//								localStorage.setItem(id + ".ShowLoras", TextAreaAutoComplete.lorasEnabled);
-		//							},
-		//						}),
-		//					]
-		//				),
-		//				$el(
-		//					"label",
-		//					{
-		//						textContent: "Auto-insert comma ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el("input", {
-		//							type: "checkbox",
-		//							checked: !!TextAreaAutoComplete.globalSeparator,
-		//							onchange: (event) => {
-		//								const checked = !!event.target.checked;
-		//								TextAreaAutoComplete.globalSeparator = checked ? ", " : "";
-		//								localStorage.setItem(id + ".AutoSeparate", TextAreaAutoComplete.globalSeparator);
-		//							},
-		//						}),
-		//					]
-		//				),
-		//				$el(
-		//					"label",
-		//					{
-		//						textContent: "Replace _ with space ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el("input", {
-		//							type: "checkbox",
-		//							checked: !!TextAreaAutoComplete.replacer,
-		//							onchange: (event) => {
-		//								const checked = !!event.target.checked;
-		//								TextAreaAutoComplete.replacer = checked ? (v) => v.replaceAll("_", " ") : undefined;
-		//								localStorage.setItem(id + ".ReplaceUnderscore", checked);
-		//							},
-		//						}),
-		//					]
-		//				),
-		//				$el(
-		//					"label",
-		//					{
-		//						textContent: "Insert suggestion on: ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el(
-		//							"label",
-		//							{
-		//								textContent: "Tab",
-		//								style: {
-		//									display: "block",
-		//									marginLeft: "20px",
-		//								},
-		//							},
-		//							[
-		//								$el("input", {
-		//									type: "checkbox",
-		//									checked: !!TextAreaAutoComplete.insertOnTab,
-		//									onchange: (event) => {
-		//										const checked = !!event.target.checked;
-		//										TextAreaAutoComplete.insertOnTab = checked;
-		//										localStorage.setItem(id + ".InsertOnTab", checked);
-		//									},
-		//								}),
-		//							]
-		//						),
-		//						$el(
-		//							"label",
-		//							{
-		//								textContent: "Enter",
-		//								style: {
-		//									display: "block",
-		//									marginLeft: "20px",
-		//								},
-		//							},
-		//							[
-		//								$el("input", {
-		//									type: "checkbox",
-		//									checked: !!TextAreaAutoComplete.insertOnEnter,
-		//									onchange: (event) => {
-		//										const checked = !!event.target.checked;
-		//										TextAreaAutoComplete.insertOnEnter = checked;
-		//										localStorage.setItem(id + ".InsertOnEnter", checked);
-		//									},
-		//								}),
-		//							]
-		//						),
-		//					]
-		//				),
-		//				$el(
-		//					"label",
-		//					{
-		//						textContent: "Max suggestions: ",
-		//						style: {
-		//							display: "block",
-		//						},
-		//					},
-		//					[
-		//						$el("input", {
-		//							type: "number",
-		//							value: +TextAreaAutoComplete.suggestionCount,
-		//							style: {
-		//								width: "80px"
-		//							},
-		//							onchange: (event) => {
-		//								const value = +event.target.value;
-		//								TextAreaAutoComplete.suggestionCount = value;;
-		//								localStorage.setItem(id + ".SuggestionCount", TextAreaAutoComplete.suggestionCount);
-		//							},
-		//						}),
-		//					]
-		//				),
-		//				$el("button", {
-		//					textContent: "Manage Custom Words",
-		//					onclick: () => {
-		//						try {
-		//							// Try closing old settings window
-		//							if (typeof app.ui.settings.element?.close === "function") {
-		//								app.ui.settings.element.close();
-		//							}
-		//						} catch (error) {
-		//						}
-		//						try {
-		//							// Try closing new vue dialog
-		//							document.querySelector(".p-dialog-close-button").click();
-		//						} catch (error) {
-		//							// Fallback to just hiding the element
-		//							app.ui.settings.element.style.display = "none";
-		//						}
-
-		//						new CustomWordsDialog().show();
-		//					},
-		//					style: {
-		//						fontSize: "14px",
-		//						display: "block",
-		//						marginTop: "5px",
-		//					},
-		//				}),
-		//			]),
-		//		]);
-		//	},
-		//});
-
-		//TextAreaAutoComplete.enabled = enabledSetting.value;
-		//TextAreaAutoComplete.replacer = localStorage.getItem(id + ".ReplaceUnderscore") === "true" ? (v) => v.replaceAll("_", " ") : undefined;
-		//TextAreaAutoComplete.insertOnTab = localStorage.getItem(id + ".InsertOnTab") !== "false";
-		//TextAreaAutoComplete.insertOnEnter = localStorage.getItem(id + ".InsertOnEnter") !== "false";
-		//TextAreaAutoComplete.lorasEnabled = localStorage.getItem(id + ".ShowLoras") === "true";
-		//TextAreaAutoComplete.suggestionCount = +localStorage.getItem(id + ".SuggestionCount") || 20;
 	},
 	setup() {
 		async function addEmbeddings() {

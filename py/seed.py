@@ -1,3 +1,4 @@
+from server import PromptServer
 from .server.ae_server import reset_registry
 import random
 from datetime import datetime
@@ -68,8 +69,10 @@ class Seed:
                 seed_value = seed_value - 1 if seed_value > 0 else seed_value
         
             self._seed_value = seed_value
+
+        PromptServer.instance.send_sync("ae-seed-node-feedback", {"node_id": unique_id, "seed": seed_value})
         
-        return {"ui": {"seed": [seed_value]}, "result": (seed_value,)}
+        return (seed_value,)
 
     @classmethod
     def IS_CHANGED(self, seed_value, mode, even, unique_id):

@@ -380,3 +380,22 @@ def add_folder_path(folder_name: str, extensions_to_register: list):
         raise Exception(e)
 
     folder_paths.folder_names_and_paths[folder_name] = (folders, extensions)
+
+def get_path_by_filename(file_path, folder):
+    lora_paths = folder_paths.get_filename_list(folder)
+
+    if file_path in lora_paths:
+        return file_path
+
+    lora_paths_no_ext = [os.path.splitext(x)[0] for x in lora_paths]
+
+    if file_path in lora_paths_no_ext:
+        found = lora_paths[lora_paths_no_ext.index(file_path)]
+        return found
+
+    file_path_force_no_ext = os.path.splitext(file_path)[0]
+    if file_path_force_no_ext in lora_paths_no_ext:
+        found = lora_paths[lora_paths_no_ext.index(file_path_force_no_ext)]
+        return found
+
+    return None

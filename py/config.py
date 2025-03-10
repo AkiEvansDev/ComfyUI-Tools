@@ -2,8 +2,9 @@ from nodes import EmptyLatentImage, ControlNetLoader
 from .inpaint import LoadInpaintModel
 import comfy.samplers
 import folder_paths
-from .base import extract_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig
+from .base import extract_filename, get_path_by_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig
 from .seed import Seed
+import os
 
 class ExtractSamplerConfig:
     @classmethod
@@ -158,7 +159,7 @@ class SamplerConfigNode:
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
                 "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
+                "cfg": ("FLOAT", {"default": 5.0, "min": 1, "max": 20, "step": 0.5}),
                 "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "seed_value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
                 "mode": (
@@ -178,9 +179,8 @@ class SamplerConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, sampler, scheduler, steps, cfg, denoise, seed_value, mode, even, unique_id):
-        result = self.seed.get_value(seed_value, mode, even, unique_id)
-        result["result"] = (SamplerConfig(seed=result["result"][0], sampler=sampler, scheduler=scheduler, steps=steps, cfg=cfg, denoise=denoise),)
-        return result
+        seed_value, = self.seed.get_value(seed_value, mode, even, unique_id)
+        return (SamplerConfig(seed=seed_value, sampler=sampler, scheduler=scheduler, steps=steps, cfg=cfg, denoise=denoise),)
 
     @classmethod
     def IS_CHANGED(self, sampler, scheduler, steps, cfg, denoise, seed_value, mode, even, unique_id):
@@ -222,7 +222,7 @@ class SDXLConfigNode:
                 "sampler": (comfy.samplers.KSampler.SAMPLERS,),
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
                 "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 0.0, "max": 100.0, "step": 0.5}),
+                "cfg": ("FLOAT", {"default": 5, "min": 1, "max": 20, "step": 0.5}),
                 "batch": ("INT", {"default": 1, "min": 1, "max": 64}),
             },
             "hidden": {
@@ -241,12 +241,11 @@ class SDXLConfigNode:
         height = int(result[1].split(" ")[0])
         
         latent, = EmptyLatentImage().generate(width, height, batch)
-        result = self.sampler_config.get_value(sampler, scheduler, steps, cfg, 1.0, seed_value, mode, even, unique_id)
+        config, = self.sampler_config.get_value(sampler, scheduler, steps, cfg, 1.0, seed_value, mode, even, unique_id)
 
-        info = f"[Generate]\nDimensions: {width}x{height}\nSeed: {result['result'][0].seed}\nSampler: {sampler}\nScheduler: {scheduler}\nSteps: {steps}\nCfg: {cfg}"
+        info = f"[Generate]\nDimensions: {width}x{height}\nSeed: {config.seed}\nSampler: {sampler}\nScheduler: {scheduler}\nSteps: {steps}\nCfg: {cfg}"
 
-        result["result"] = (latent, result["result"][0], info,)
-        return result
+        return (latent, config, info,)
 
     @classmethod
     def IS_CHANGED(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, batch, unique_id):
@@ -259,7 +258,7 @@ class ControlNetConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": (folder_paths.get_filename_list("controlnet"), ),
+                "model": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
                 "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
                 "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
@@ -273,7 +272,7 @@ class ControlNetConfigNode:
 
     def get_value(self, model, strength, start, end):
         info = extract_filename(model) + f":{strength} [{start}:{end}]"
-        control_net, = ControlNetLoader().load_controlnet(model)
+        control_net, = ControlNetLoader().load_controlnet(get_path_by_filename(model, "controlnet"))
         return (ControlNetConfig(model=control_net, strength=strength, start=start, end=end), info,)
 
 class HiresFixConfigNode:
@@ -317,7 +316,7 @@ class Img2ImgConfigNode:
                 "steps": ("INT", {"default": 15, "min": 1, "max": 100, "step": 1}),
                 "denoise": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "use_control_net": ("BOOLEAN", {"default": False}),
-                "controlnet": (folder_paths.get_filename_list("controlnet"), ),
+                "controlnet": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
                 "strength": ("FLOAT", {"default": 0.5, "min": 0, "max": 2, "step": 0.05}),
                 "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
@@ -356,7 +355,7 @@ class OutpaintConfigNode:
         return {
             "required": {
                 "use_hires_model": ("BOOLEAN", {"default": True}),
-                "model": (folder_paths.get_filename_list("inpaint"),),
+                "model": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("inpaint")],),
                 "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
                 "denoise": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "left": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
@@ -366,7 +365,7 @@ class OutpaintConfigNode:
                 "feathering": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
                 "noise_percentage": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "use_control_net": ("BOOLEAN", {"default": False}),
-                "controlnet": (folder_paths.get_filename_list("controlnet"), ),
+                "controlnet": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
                 "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
                 "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
                 "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
@@ -382,7 +381,7 @@ class OutpaintConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, use_hires_model, model, steps, denoise, left, top, right, bottom, feathering, noise_percentage, use_control_net, controlnet, strength, start, end, base_config=None):
-        inpaint, = LoadInpaintModel().load(model)
+        inpaint, = LoadInpaintModel().load(get_path_by_filename(model, "inpaint"))
         config = OutpaintConfig(model=inpaint, left=left, top=top, right=right, bottom=bottom,
                               feathering=feathering, noise_percentage=noise_percentage, 
                               use_hires_model=use_hires_model, steps=steps, denoise=denoise)

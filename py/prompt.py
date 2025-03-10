@@ -1,5 +1,6 @@
+import re
 from nodes import CLIPTextEncode, ConditioningCombine, ConditioningConcat
-from .base import is_not_blank, clean_string, is_not_blank_replace
+from .base import is_blank, is_not_blank, clean_string, is_not_blank_replace
 
 def get_prompt(prompt, positive, background, positive_style, negative, negative_style):
     text = ""
@@ -60,9 +61,54 @@ def prepare_conditioning(clip, concat_prompt, positive, posture, background, pos
 
     return positive_con, negative_con
 
+def process_brackets(text):
+    if is_blank(text):
+        return text
+
+    def process_round(match):
+        tags = match.group(1)
+        brackets = match.group(0).count('(') 
+
+        if ':' in tags:
+            return match.group(0)
+
+        tags_list = re.split(r'[,\+]+', tags)
+        separator = ', ' if ',' in tags else ' + '
+
+        processed_tags = []
+        for tag in tags_list:
+            tag = tag.strip()
+            coefficient = round(1.1 ** brackets, 2)
+            processed_tags.append(f"({tag}:{coefficient})")
+
+        return separator.join(processed_tags)
+
+    def process_square(match):
+        tags = match.group(1) 
+        brackets = match.group(0).count('[')
+
+        if ':' in tags:
+            return match.group(0)
+
+        tags_list = re.split(r'[,\+]+', tags)
+        separator = ', ' if ',' in tags else ' + '
+
+        processed_tags = []
+        for tag in tags_list:
+            tag = tag.strip()
+            coefficient = round(0.9 ** brackets, 2)
+            processed_tags.append(f"({tag}:{coefficient})")
+
+        return separator.join(processed_tags)
+
+    text = re.sub(r'\[+([^\[\]]+)\]+', process_square, text)
+    text = re.sub(r'\(+([^()]+)\)+', process_round, text)
+    
+    return text
+
 POSITIVE = ""
-POSITIVE_STYLE = "score_9, score_8_up, score_7_up, best quality"
-NEGATIVE = "ugly, bad hands"
+POSITIVE_STYLE = "score_9, score_8_up, score_7_up, high quality, best quality, masterpiece, 4k, 8k"
+NEGATIVE = "bad eyes, bad anatomy, bad hands, deformed, ugly, missing fingers, extra fingers"
 NEGATIVE_STYLE = "score_6, score_5, score_4, score_3, score_2, score_1, bad quality, lowres, blurry, cropped, jpeg artifacts, mosaic censoring, signature, watermark, artist name"
 
 class SDXLPrompt:
@@ -71,15 +117,16 @@ class SDXLPrompt:
         return {
             "required": {
                 "clip": ("CLIP",),
-                "concat_prompt": ("BOOLEAN", {"default": False}),
+                "concat_prompt": ("BOOLEAN", {"default": True}),
+                "process_tag_weights": ("BOOLEAN", {"default": True}),
                 "find_1": ("STRING", {"default": "{x}", "multiline": False}),
                 "find_2": ("STRING", {"default": "{y}", "multiline": False}),
-                "positive": ("STRING", {"default": POSITIVE, "multiline": True, "dynamicPrompts": True}),
-                "posture": ("STRING", {"default": "", "multiline": True, "dynamicPrompts": True}),
-                "background": ("STRING", {"default": "", "multiline": True, "dynamicPrompts": True}),
-                "positive_style": ("STRING", {"default": POSITIVE_STYLE, "multiline": True, "dynamicPrompts": True}),
-                "negative": ("STRING", {"default": NEGATIVE, "multiline": True, "dynamicPrompts": True}),
-                "negative_style": ("STRING", {"default": NEGATIVE_STYLE, "multiline": True, "dynamicPrompts": True}),
+                "positive": ("STRING", {"default": POSITIVE, "multiline": True}),
+                "posture": ("STRING", {"default": "", "multiline": True}),
+                "background": ("STRING", {"default": "", "multiline": True}),
+                "positive_style": ("STRING", {"default": POSITIVE_STYLE, "multiline": True}),
+                "negative": ("STRING", {"default": NEGATIVE, "multiline": True}),
+                "negative_style": ("STRING", {"default": NEGATIVE_STYLE, "multiline": True}),
             },
             "optional": {
                 "replace_1": ("STRING", {"forceInput": True}),
@@ -92,7 +139,7 @@ class SDXLPrompt:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, clip, concat_prompt, find_1, find_2, positive, posture, background, positive_style, negative, negative_style, replace_1="", replace_2=""):
+    def get_value(self, clip, concat_prompt, process_tag_weights, find_1, find_2, positive, posture, background, positive_style, negative, negative_style, replace_1="", replace_2=""):
         replace_1 = clean_string(replace_1)
         replace_2 = clean_string(replace_2)
         find_1 = clean_string(find_1)
@@ -108,6 +155,14 @@ class SDXLPrompt:
         positive = is_not_blank_replace(positive, find_2, replace_2)
         posture = is_not_blank_replace(posture, find_2, replace_2)
         background = is_not_blank_replace(background, find_2, replace_2)
+
+        if process_tag_weights:
+            positive = process_brackets(positive)
+            posture = process_brackets(positive)
+            background = process_brackets(positive)
+            positive_style = process_brackets(positive)
+            negative = process_brackets(positive)
+            negative_style = process_brackets(positive)
 
         prompt_text = get_prompt(positive, posture, background, positive_style, negative, negative_style)
 
@@ -125,15 +180,16 @@ class SDXLPromptWithHires:
             "required": {
                 "clip": ("CLIP",),
                 "clip_hires": ("CLIP",),
-                "concat_prompt": ("BOOLEAN", {"default": False}),
+                "concat_prompt": ("BOOLEAN", {"default": True}),
+                "process_tag_weights": ("BOOLEAN", {"default": True}),
                 "find_1": ("STRING", {"default": "{x}", "multiline": False}),
                 "find_2": ("STRING", {"default": "{y}", "multiline": False}),
-                "positive": ("STRING", {"default": POSITIVE, "multiline": True, "dynamicPrompts": True}),
-                "posture": ("STRING", {"default": "", "multiline": True, "dynamicPrompts": True}),
-                "background": ("STRING", {"default": "", "multiline": True, "dynamicPrompts": True}),
-                "positive_style": ("STRING", {"default": POSITIVE_STYLE, "multiline": True, "dynamicPrompts": True}),
-                "negative": ("STRING", {"default": NEGATIVE, "multiline": True, "dynamicPrompts": True}),
-                "negative_style": ("STRING", {"default": NEGATIVE_STYLE, "multiline": True, "dynamicPrompts": True}),
+                "positive": ("STRING", {"default": POSITIVE, "multiline": True}),
+                "posture": ("STRING", {"default": "", "multiline": True}),
+                "background": ("STRING", {"default": "", "multiline": True}),
+                "positive_style": ("STRING", {"default": POSITIVE_STYLE, "multiline": True}),
+                "negative": ("STRING", {"default": NEGATIVE, "multiline": True}),
+                "negative_style": ("STRING", {"default": NEGATIVE_STYLE, "multiline": True}),
             },
             "optional": {
                 "replace_1": ("STRING", {"forceInput": True}),
@@ -146,7 +202,7 @@ class SDXLPromptWithHires:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, clip, clip_hires, concat_prompt, find_1, find_2, positive, posture, background, positive_style, negative, negative_style, replace_1="", replace_2=""):
+    def get_value(self, clip, clip_hires, concat_prompt, process_tag_weights, find_1, find_2, positive, posture, background, positive_style, negative, negative_style, replace_1="", replace_2=""):
         replace_1 = clean_string(replace_1)
         replace_2 = clean_string(replace_2)
         find_1 = clean_string(find_1)
@@ -162,6 +218,14 @@ class SDXLPromptWithHires:
         positive = is_not_blank_replace(positive, find_2, replace_2)
         posture = is_not_blank_replace(posture, find_2, replace_2)
         background = is_not_blank_replace(background, find_2, replace_2)
+
+        if process_tag_weights:
+            positive = process_brackets(positive)
+            posture = process_brackets(positive)
+            background = process_brackets(positive)
+            positive_style = process_brackets(positive)
+            negative = process_brackets(positive)
+            negative_style = process_brackets(positive)
 
         prompt_text = get_prompt(positive, posture, background, positive_style, negative, negative_style)
 

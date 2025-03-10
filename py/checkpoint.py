@@ -1,13 +1,14 @@
 from nodes import CheckpointLoaderSimple
 import folder_paths
-from .base import extract_filename
+from .base import extract_filename, get_path_by_filename
+import os
 
 class CustomCheckpointLoader:
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": (folder_paths.get_filename_list("checkpoints"), ),
+                "model": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("checkpoints")], ),
             },
         }
 
@@ -18,5 +19,5 @@ class CustomCheckpointLoader:
 
     def load_checkpoint(self, model):
         name = extract_filename(model)
-        model, clip, vae = CheckpointLoaderSimple().load_checkpoint(model)
+        model, clip, vae = CheckpointLoaderSimple().load_checkpoint(get_path_by_filename(model, "checkpoints"))
         return (model, clip, vae, name,)
