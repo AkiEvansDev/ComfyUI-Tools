@@ -158,11 +158,11 @@ class SDXLPrompt:
 
         if process_tag_weights:
             positive = process_brackets(positive)
-            posture = process_brackets(positive)
-            background = process_brackets(positive)
-            positive_style = process_brackets(positive)
-            negative = process_brackets(positive)
-            negative_style = process_brackets(positive)
+            posture = process_brackets(posture)
+            background = process_brackets(background)
+            positive_style = process_brackets(positive_style)
+            negative = process_brackets(negative)
+            negative_style = process_brackets(negative_style)
 
         prompt_text = get_prompt(positive, posture, background, positive_style, negative, negative_style)
 
@@ -218,14 +218,14 @@ class SDXLPromptWithHires:
         positive = is_not_blank_replace(positive, find_2, replace_2)
         posture = is_not_blank_replace(posture, find_2, replace_2)
         background = is_not_blank_replace(background, find_2, replace_2)
-
+        
         if process_tag_weights:
             positive = process_brackets(positive)
-            posture = process_brackets(positive)
-            background = process_brackets(positive)
-            positive_style = process_brackets(positive)
-            negative = process_brackets(positive)
-            negative_style = process_brackets(positive)
+            posture = process_brackets(posture)
+            background = process_brackets(background)
+            positive_style = process_brackets(positive_style)
+            negative = process_brackets(negative)
+            negative_style = process_brackets(negative_style)
 
         prompt_text = get_prompt(positive, posture, background, positive_style, negative, negative_style)
 
