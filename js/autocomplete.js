@@ -416,7 +416,8 @@ function toggleLoras() {
 }
 
 export class TextAreaAutoComplete {
-	static globalSeparator = ", ";
+	//static globalSeparator = ", ";
+	static globalSeparator = "";
 	static enabled = true;
 	static insertOnTab = true;
 	static insertOnEnter = false;
