@@ -2,7 +2,7 @@ from nodes import EmptyLatentImage, ControlNetLoader
 from .inpaint import LoadInpaintModel
 import comfy.samplers
 import folder_paths
-from .base import extract_filename, get_path_by_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig
+from .base import extract_filename, get_path_by_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig, SAMPLER, SCHEDULER, CFG
 from .seed import Seed
 import os
 
@@ -156,11 +156,11 @@ class SamplerConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-                "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5.0, "min": 1, "max": 20, "step": 0.5}),
-                "denoise": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "sampler": (comfy.samplers.KSampler.SAMPLERS, {"default": SAMPLER}),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {"default": SCHEDULER}),
+                "steps": ("INT", {"default": 40, "min": 1, "max": 100, "step": 1}),
+                "cfg": ("FLOAT", {"default": CFG, "min": 1, "max": 20, "step": 0.5}),
+                "denoise": ("FLOAT", {"default": 1, "min": 0, "max": 1, "step": 0.05}),
                 "seed_value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
                 "mode": (
                     ["fixed", "randomize", "increment", "decrement"], 
@@ -218,11 +218,11 @@ class SDXLConfigNode:
                     ["fixed", "randomize", "increment", "decrement"], 
                     {"default": "fixed"}
                 ),
-                "even": ("BOOLEAN", {"default": False}),
-                "sampler": (comfy.samplers.KSampler.SAMPLERS,),
-                "scheduler": (comfy.samplers.KSampler.SCHEDULERS,),
-                "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "cfg": ("FLOAT", {"default": 5, "min": 1, "max": 20, "step": 0.5}),
+                "even": ("BOOLEAN", {"default": True}),
+                "sampler": (comfy.samplers.KSampler.SAMPLERS, {"default": SAMPLER}),
+                "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {"default": SCHEDULER}),
+                "steps": ("INT", {"default": 40, "min": 1, "max": 100, "step": 1}),
+                "cfg": ("FLOAT", {"default": CFG, "min": 1, "max": 20, "step": 0.5}),
                 "batch": ("INT", {"default": 1, "min": 1, "max": 64}),
             },
             "hidden": {
@@ -260,8 +260,8 @@ class ControlNetConfigNode:
             "required": {
                 "model": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
                 "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
-                "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
-                "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "start": ("FLOAT", {"default": 0, "min": 0, "max": 1, "step": 0.05}),
+                "end": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.05}),
             },
         }
 
@@ -280,9 +280,9 @@ class HiresFixConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "scale": ("FLOAT", {"default": 1.5, "min": 1.0, "max": 4.0, "step": 0.25}),
-                "steps": ("INT", {"default": 15, "min": 1, "max": 100, "step": 1}),
-                "denoise": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "scale": ("FLOAT", {"default": 1.5, "min": 1, "max": 4, "step": 0.25}),
+                "steps": ("INT", {"default": 20, "min": 1, "max": 100, "step": 1}),
+                "denoise": ("FLOAT", {"default": 0.6, "min": 0, "max": 1, "step": 0.05}),
             },
             "optional": {
                 "base_config": ("SAMPLER_CONFIG",)
@@ -313,13 +313,13 @@ class Img2ImgConfigNode:
         return {
             "required": {
                 "use_hires_model": ("BOOLEAN", {"default": True}),
-                "steps": ("INT", {"default": 15, "min": 1, "max": 100, "step": 1}),
-                "denoise": ("FLOAT", {"default": 0.4, "min": 0.0, "max": 1.0, "step": 0.05}),
-                "use_control_net": ("BOOLEAN", {"default": False}),
+                "steps": ("INT", {"default": 20, "min": 1, "max": 100, "step": 1}),
+                "denoise": ("FLOAT", {"default": 0.9, "min": 0, "max": 1, "step": 0.05}),
+                "use_control_net": ("BOOLEAN", {"default": True}),
                 "controlnet": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
-                "strength": ("FLOAT", {"default": 0.5, "min": 0, "max": 2, "step": 0.05}),
-                "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
-                "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
+                "start": ("FLOAT", {"default": 0, "min": 0, "max": 1, "step": 0.05}),
+                "end": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.05}),
             },
             "optional": {
                 "base_config": ("SAMPLER_CONFIG",)
@@ -354,10 +354,10 @@ class OutpaintConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "use_hires_model": ("BOOLEAN", {"default": True}),
+                "use_hires_model": ("BOOLEAN", {"default": False}),
                 "model": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("inpaint")],),
-                "steps": ("INT", {"default": 30, "min": 1, "max": 100, "step": 1}),
-                "denoise": ("FLOAT", {"default": 0.6, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "steps": ("INT", {"default": 40, "min": 1, "max": 100, "step": 1}),
+                "denoise": ("FLOAT", {"default": 0.7, "min": 0, "max": 1, "step": 0.05}),
                 "left": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
                 "top": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
                 "right": ("INT", {"default": 64, "min": 0, "max": 1024, "step": 8}),
@@ -367,8 +367,8 @@ class OutpaintConfigNode:
                 "use_control_net": ("BOOLEAN", {"default": False}),
                 "controlnet": ([os.path.splitext(path)[0] for path in folder_paths.get_filename_list("controlnet")], ),
                 "strength": ("FLOAT", {"default": 0.25, "min": 0, "max": 2, "step": 0.05}),
-                "start": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1.0, "step": 0.05}),
-                "end": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.05}),
+                "start": ("FLOAT", {"default": 0, "min": 0, "max": 1, "step": 0.05}),
+                "end": ("FLOAT", {"default": 0.5, "min": 0, "max": 1, "step": 0.05}),
             },
             "optional": {
                 "base_config": ("SAMPLER_CONFIG",)
