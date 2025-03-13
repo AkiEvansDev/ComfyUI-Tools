@@ -102,12 +102,12 @@ function queue(type, node) {
 app.registerExtension({
     name: "AE.Range",
     async beforeRegisterNodeDef(nodeType, nodeData) {
-		if (nodeData.name === "AE.Range" || nodeData.name === "AE.XYRange") {
+		if (nodeData.name === "AE.Range" || nodeData.name === "AE.XYRange" || nodeData.name === "AE.RangeList") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
 				const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
 
-				if (nodeData.name === "AE.Range") {
+				if (nodeData.name === "AE.Range" || nodeData.name === "AE.RangeList") {
 					const widget = this.widgets.find((w) => w.name === "current");
 					if (widget) {
 						widget.node = this;
@@ -133,13 +133,15 @@ app.registerExtension({
 					}
 				}
 
-				this.addWidget("button", "Queue Full", "QueueButton", (source, canvas, node, pos, event) => {
-					queue(nodeData.name, node);
-				});
+				if (nodeData.name != "AE.RangeList") {
+					this.addWidget("button", "Queue Full", "QueueButton", (source, canvas, node, pos, event) => {
+						queue(nodeData.name, node);
+					});
 
-				this.addWidget("button", "Reset Range", "ResetButton", (source, canvas, node, pos, event) => {
-					reset(nodeData.name, node);
-				});
+					this.addWidget("button", "Reset Range", "ResetButton", (source, canvas, node, pos, event) => {
+						reset(nodeData.name, node);
+					});
+				}
 			};
 		}
     },

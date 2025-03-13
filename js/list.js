@@ -3,7 +3,7 @@ import { app } from "../../scripts/app.js";
 app.registerExtension({
     name: "AE.Lists",
     async beforeRegisterNodeDef(nodeType, nodeData) {
-        if (nodeData.name === "AE.IntList" || nodeData.name === "AE.FloatList" || nodeData.name === "AE.StringList") {
+        if (nodeData.name === "AE.IntList" || nodeData.name === "AE.FloatList" || nodeData.name === "AE.StringList" || nodeData.name === "AE.RangeList") {
             const onConfigure = nodeType.prototype.onConfigure;
             nodeType.prototype.onConfigure = function (info) {
                 const r = onConfigure ? onConfigure.apply(this, info) : undefined;

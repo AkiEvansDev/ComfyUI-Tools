@@ -143,3 +143,67 @@ class XYRange:
     @classmethod
     def IS_CHANGED(selff, x, y, x_start, x_end, y_start, y_end, unique_id):
         return float("NaN")
+
+class RangeList:
+    def __init__(self):
+        self._current = 0
+        self._unique_id = None
+
+    def __del__(self):
+        if self._unique_id is not None and self._unique_id in reset_registry:
+            reset_registry.pop(self._unique_id, False)
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "current": ("INT", {"default": 0, "min": -0xffffffffffffffff, "max": 0xffffffffffffffff}),
+                "list": ("STRING", {"multiline": True}),
+            },
+            "hidden": {
+                "unique_id": "UNIQUE_ID",
+            },
+        }
+
+    RETURN_TYPES = ("INT",)
+    RETURN_NAMES = ("current",)
+    FUNCTION = "get_value"
+    CATEGORY = "AE.Tools/List"
+
+    def get_value(self, current, list, unique_id):
+        if self._unique_id != unique_id:
+            self._unique_id = unique_id
+
+        if unique_id and unique_id not in reset_registry:
+            reset_registry[unique_id] = False
+
+        freeze = False
+        if unique_id and unique_id in reset_registry and reset_registry[unique_id] == True:
+            reset_registry[unique_id] = False
+            freeze = True
+            self._current = current
+        
+        current = self._current
+        numbers = [int(line.strip()) for line in list.splitlines() if line.strip()]
+        start = 0
+        end = len(numbers) - 1
+        index = numbers.index(current) if current in numbers else -1
+
+        if index < start or index > end:
+            index = start
+        else:
+            if not freeze:
+                index += 1
+            if index > end:
+                index = start
+
+        current = numbers[index]
+        self._current = current
+
+        PromptServer.instance.send_sync("ae-range-node-feedback", {"node_id": unique_id, "current": current})
+
+        return (current,)
+
+    @classmethod
+    def IS_CHANGED(self, current, list, unique_id):
+        return float("NaN")

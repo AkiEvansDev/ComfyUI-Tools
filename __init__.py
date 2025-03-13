@@ -77,6 +77,7 @@ NODE_CLASS_MAPPINGS = {
 
     "AE.Range": Range,
     "AE.XYRange": XYRange,
+    "AE.RangeList": RangeList,
 
     "AE.AnySwitch": AnySwitch,
     "AE.AnyTypeSwitch": AnyTypeSwitch,
@@ -182,6 +183,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
     "AE.Range": "Range",
     "AE.XYRange": "XY Range",
+    "AE.RangeList": "Range List",
     
     "AE.AnySwitch" : "Any Switch",
     "AE.AnyTypeSwitch": "AnyType Switch",
