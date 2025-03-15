@@ -89,6 +89,6 @@ class OutpaintWithModelAndConfig:
 
     def outpaint(self, positive, negative, image, vae, config, control_net_image=None):
         if config.controlnet:
-            positive, negative, = ControlNetApplyWithConfig().apply_controlnet(positive, negative, control_net_image if control_net_image else image, config.controlnet, vae)
+            positive, negative, = ControlNetApplyWithConfig().apply_controlnet(positive, negative, control_net_image if control_net_image is not None else image, config.controlnet, vae)
 
         return OutpaintWithModel().outpaint(config.model, positive, negative, image, config.left, config.top, config.right, config.bottom, config.feathering, config.noise_percentage, vae, config.seed)

@@ -3,7 +3,7 @@ from itertools import repeat
 import numpy as np
 import torch
 import torch.jit
-from torch import Tensor, conv2d, conv_transpose2d
+from torch import conv2d, conv_transpose2d
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as checkpoint

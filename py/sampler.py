@@ -82,7 +82,7 @@ class KSamplerImg2ImgWithConfig:
                 negative = negative_hires
         
         if config.controlnet:
-            if not control_net_image:
+            if control_net_image is None:
                 control_net_image, = VAEDecode().decode(vae, latent)
             positive, negative, = ControlNetApplyWithConfig().apply_controlnet(positive, negative, control_net_image, config.controlnet, vae)
 
