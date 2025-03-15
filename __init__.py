@@ -114,12 +114,16 @@ NODE_CLASS_MAPPINGS = {
 
     "AE.SDXLPrompt": SDXLPrompt,
     "AE.SDXLPromptWithHires": SDXLPromptWithHires,
+    "AE.SDXLRegionalPrompt": SDXLRegionalPrompt,
+    "AE.SDXLRegionalPromptWithHires": SDXLRegionalPromptWithHires,
     
     "AE.ControlNetApplyWithConfig": ControlNetApplyWithConfig,
 
     "AE.KSamplerWithConfig": KSamplerWithConfig,
     "AE.KSamplerHiresFixWithConfig": KSamplerHiresFixWithConfig,
     "AE.KSamplerImg2ImgWithConfig": KSamplerImg2ImgWithConfig,
+    "AE.KSamplerInpaintWithConfig": KSamplerInpaintWithConfig,
+    "AE.KSamplerOutpaintWithConfigAndImage": KSamplerOutpaintWithConfigAndImage,
     "AE.KSamplerOutpaintWithConfig": KSamplerOutpaintWithConfig,
 
     "AE.UpscaleLatentBy": UpscaleLatentBy,
@@ -220,12 +224,16 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 
     "AE.SDXLPrompt": "SDXL Prompt",
     "AE.SDXLPromptWithHires": "SDXL Prompt With Hires",
+    "AE.SDXLRegionalPrompt": "SDXL Regional Prompt",
+    "AE.SDXLRegionalPromptWithHires": "SDXL Regional Prompt With Hires",
     
     "AE.ControlNetApplyWithConfig": "ControlNet Apply With Config",
 
     "AE.KSamplerWithConfig": "KSampler With Config",
     "AE.KSamplerHiresFixWithConfig": "KSampler HiresFix With Config",
     "AE.KSamplerImg2ImgWithConfig": "KSampler Img2Img With Config",
+    "AE.KSamplerInpaintWithConfig": "KSampler Inpaint With Config",
+    "AE.KSamplerOutpaintWithConfigAndImage": "KSampler Outpaint With Config & Image",
     "AE.KSamplerOutpaintWithConfig": "KSampler Outpaint With Config",
 
     "AE.UpscaleLatentBy": "Upscale Latent By Model",
@@ -235,7 +243,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "AE.VAEEncodeInpaintConditioning": "VAE Encode Inpaint Conditioning",
 
     "AE.OutpaintWithModel": "Outpaint With Model",
-    "AE.OutpaintWithModelAndConfig": "Outpaint With Model And Config",
+    "AE.OutpaintWithModelAndConfig": "Outpaint With Model & Config",
 }
 
 WEB_DIRECTORY = "js"

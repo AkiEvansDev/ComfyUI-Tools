@@ -1,6 +1,19 @@
 import os
 import folder_paths
 
+
+DIMENSIONS = [
+    "1536 x 640   (landscape)",
+    "1344 x 768   (landscape)",
+    "1216 x 832   (landscape)",
+    "1152 x 896   (landscape)",
+    "1024 x 1024  (square)",
+    " 896 x 1152  (portrait)",
+    " 832 x 1216  (portrait)",
+    " 768 x 1344  (portrait)",
+    " 640 x 1536  (portrait)",
+];
+
 SAMPLER = "deis"
 SCHEDULER = "kl_optimal"
 CFG = 2.0

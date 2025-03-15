@@ -3,12 +3,12 @@ import { app } from "../../scripts/app.js";
 app.registerExtension({
     name: "AE.SDXLPrompt",
     async beforeRegisterNodeDef(nodeType, nodeData) {
-        if (nodeData.name === "AE.SDXLPrompt" || nodeData.name === "AE.SDXLPromptWithHires") {
+        if (nodeData.name === "AE.SDXLPrompt" || nodeData.name === "AE.SDXLPromptWithHires" || nodeData.name === "AE.SDXLRegionalPrompt" || nodeData.name === "AE.SDXLRegionalPromptWithHires") {
             const onNodeCreated = nodeType.prototype.onNodeCreated;
             nodeType.prototype.onNodeCreated = function () {
                 const r = onNodeCreated ? onNodeCreated.apply(this) : undefined;
 
-                const targetNames = ["positive", "posture", "background", "positive_style", "negative", "negative_style"];
+                const targetNames = ["positive", "posture", "background", "style", "positive_style", "negative", "negative_style"];
 
                 targetNames.forEach((name) => {
                     const widget = this.widgets.find((w) => w.name === name);

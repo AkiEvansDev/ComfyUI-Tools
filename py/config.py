@@ -2,7 +2,7 @@ from nodes import EmptyLatentImage, ControlNetLoader
 from .inpaint import LoadInpaintModel
 import comfy.samplers
 import folder_paths
-from .base import extract_filename, get_path_by_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig, SAMPLER, SCHEDULER, CFG
+from .base import extract_filename, get_path_by_filename, SamplerConfig, ControlNetConfig, HiresFixConfig, Img2ImgFixConfig, OutpaintConfig, DIMENSIONS, SAMPLER, SCHEDULER, CFG
 from .seed import Seed
 import os
 
@@ -199,20 +199,7 @@ class SDXLConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "dimensions": (
-                    [
-                        "1536 x 640   (landscape)",
-                        "1344 x 768   (landscape)",
-                        "1216 x 832   (landscape)",
-                        "1152 x 896   (landscape)",
-                        "1024 x 1024  (square)",
-                        " 896 x 1152  (portrait)",
-                        " 832 x 1216  (portrait)",
-                        " 768 x 1344  (portrait)",
-                        " 640 x 1536  (portrait)",
-                    ], 
-                    { "default": "1024 x 1024  (square)" }
-                ),
+                "dimensions": (DIMENSIONS, { "default": "1024 x 1024  (square)" }),
                 "seed_value": ("INT", {"default": 0, "min": 0, "max": 9999999999999999}),
                 "mode": (
                     ["fixed", "randomize", "increment", "decrement"], 
@@ -223,7 +210,6 @@ class SDXLConfigNode:
                 "scheduler": (comfy.samplers.KSampler.SCHEDULERS, {"default": SCHEDULER}),
                 "steps": ("INT", {"default": 40, "min": 1, "max": 100, "step": 1}),
                 "cfg": ("FLOAT", {"default": CFG, "min": 1, "max": 20, "step": 0.5}),
-                "batch": ("INT", {"default": 1, "min": 1, "max": 64}),
             },
             "hidden": {
                 "unique_id": "UNIQUE_ID",
@@ -235,12 +221,12 @@ class SDXLConfigNode:
     FUNCTION = "get_value"
     CATEGORY = "AE.Tools/Config"
 
-    def get_value(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, batch, unique_id):
+    def get_value(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, unique_id):
         result = [x.strip() for x in dimensions.split("x")]
         width = int(result[0])
         height = int(result[1].split(" ")[0])
         
-        latent, = EmptyLatentImage().generate(width, height, batch)
+        latent, = EmptyLatentImage().generate(width, height, 1)
         config, = self.sampler_config.get_value(sampler, scheduler, steps, cfg, 1.0, seed_value, mode, even, unique_id)
 
         info = f"[Generate]\nDimensions: {width}x{height}\nSeed: {config.seed}\nSampler: {sampler}\nScheduler: {scheduler}\nSteps: {steps}\nCfg: {cfg}"
@@ -248,7 +234,7 @@ class SDXLConfigNode:
         return (latent, config, info,)
 
     @classmethod
-    def IS_CHANGED(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, batch, unique_id):
+    def IS_CHANGED(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, unique_id):
         if mode == "fixed":
             return 0
         return float("NaN")
