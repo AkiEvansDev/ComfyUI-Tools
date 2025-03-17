@@ -744,8 +744,10 @@ app.registerExtension({
 		ComfyWidgets.STRING = function (node, inputName, inputData) {
 			const r = STRING.apply(this, arguments);
 
-			if (inputData[1]?.multiline) {
-				new TextAreaAutoComplete(r.widget.inputEl);
+			if (node.comfyClass != "AE.IntList" && node.comfyClass != "AE.FloatList" && node.comfyClass != "AE.RangeList") {
+				if (inputData[1]?.multiline) {
+					new TextAreaAutoComplete(r.widget.inputEl);
+				}
 			}
 
 			return r;

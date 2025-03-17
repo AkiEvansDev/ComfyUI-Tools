@@ -20,6 +20,7 @@ app.registerExtension({
                 input.style.border = "0.5px solid " + LiteGraph.WIDGET_OUTLINE_COLOR;
                 input.style.borderRadius = "4px";
                 input.style.paddingLeft = "24px";
+                input.style.textWrap = "nowrap"
 
                 const numbers = document.createElement('textarea');
 
@@ -44,7 +45,7 @@ app.registerExtension({
                         input.value = lines.slice(0, maxLines).join('\n');
                     }
 
-                    if (nodeData.name === "AE.IntList") {
+                    if (nodeData.name === "AE.IntList" || nodeData.name === "AE.RangeList") {
                         const filteredValue = input.value.split('\n').map(line => {
                             return line.replace(/(?!^-)-|[^-\d]/g, '');
                         }).join('\n');
