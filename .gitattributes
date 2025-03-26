@@ -1,3 +1,0 @@
-py/autocomplete/*.txt filter=lfs diff=lfs merge=lfs -text
-py/autocomplete/*.json filter=lfs diff=lfs merge=lfs -text
-py/model/* filter=lfs diff=lfs merge=lfs -text
