@@ -73,7 +73,16 @@ app.registerExtension({
                     numbers.scrollTop = input.scrollTop;
                 });
 
-                input.parentNode.insertBefore(numbers, input);
+                function initNumbers() {
+                    if (input.parentNode) {
+                        input.numbersInit = true;
+                        input.parentNode.insertBefore(numbers, input);
+                    } else {
+                        setTimeout(initNumbers, 500);
+                    }
+                }
+
+                initNumbers();
 
                 this.numbers = numbers;
                 this.updateNumbers = updateLineNumbers;
@@ -104,8 +113,11 @@ app.registerExtension({
             const onRemoved = nodeType.prototype.onRemoved;
             nodeType.prototype.onRemoved = function () {
                 const r = onRemoved ? onRemoved.apply(this) : undefined;
+                const input = this.widgets.find((w) => w.name === "list").element;
 
-                this.numbers.remove();
+                if (input.numbersInit) {
+                    this.numbers.remove();
+                }
             };
         }
     },
