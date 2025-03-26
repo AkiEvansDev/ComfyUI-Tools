@@ -400,4 +400,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 /py/autocomplete/*.json
+/py/autocomplete/autocomplete_old.txt
 /py/model/*
