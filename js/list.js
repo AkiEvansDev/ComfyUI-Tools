@@ -74,7 +74,7 @@ app.registerExtension({
                 });
 
                 function initNumbers() {
-                    if (input.parentNode) {
+                    if (input.parentNode != null) {
                         input.numbersInit = true;
                         input.parentNode.insertBefore(numbers, input);
                     } else {
@@ -115,7 +115,7 @@ app.registerExtension({
                 const r = onRemoved ? onRemoved.apply(this) : undefined;
                 const input = this.widgets.find((w) => w.name === "list").element;
 
-                if (input.numbersInit) {
+                if (input.numbersInit == true) {
                     this.numbers.remove();
                 }
             };
