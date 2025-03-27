@@ -76,6 +76,8 @@ app.registerExtension({
                 function initNumbers() {
                     if (input.parentNode != null) {
                         input.numbersInit = true;
+                        input.style.marginLeft = "-20px";
+                        input.parentNode.style.display = "flex";
                         input.parentNode.insertBefore(numbers, input);
                     } else {
                         setTimeout(initNumbers, 500);
@@ -86,28 +88,6 @@ app.registerExtension({
 
                 this.numbers = numbers;
                 this.updateNumbers = updateLineNumbers;
-
-                const observer = new MutationObserver((mutationsList) => {
-                    for (let mutation of mutationsList) {
-                        if (mutation.type === 'attributes') {
-                            if (mutation.attributeName === 'style') {
-                                numbers.style.transformOrigin = input.style.transformOrigin;
-                                numbers.style.transform = input.style.transform;
-                                numbers.style.left = input.style.left;
-                                numbers.style.top = input.style.top;
-                                numbers.style.height = input.style.height;
-                                numbers.style.position = input.style.position;
-                                numbers.style.zIndex = parseInt(input.style.zIndex) + 1;
-                                numbers.style.willChange = input.style.willChange;
-                                numbers.style.display = input.style.display;
-                            }
-                        }
-                    }
-                });
-
-                observer.observe(input, {
-                    attributes: true
-                });
             };
 
             const onRemoved = nodeType.prototype.onRemoved;
