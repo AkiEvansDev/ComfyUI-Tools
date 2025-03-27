@@ -17,21 +17,21 @@ app.registerExtension({
 
                 removeUnusedInputsFromEnd(this, 1, /^\d+$/);
                 addAnyInput(this, 2);
-            };
 
-            const onConnectionsChange = nodeType.prototype.onConnectionsChange;
-            nodeType.prototype.onConnectionsChange = function (type, index, connected, link_info) {
-                const r = onConnectionsChange ? onConnectionsChange.apply(this, type, index, connected, link_info) : undefined;
+                const onConnectionsChange = this.onConnectionsChange;
+                this.onConnectionsChange = function (type, index, connected, link_info) {
+                    const r = onConnectionsChange ? onConnectionsChange.apply(this, type, index, connected, link_info) : undefined;
 
-                const oldWidth = this.size[0];
+                    const oldWidth = this.size[0];
 
-                removeUnusedInputsFromEnd(this, 1, /^\d+$/);
-                addAnyInput(this);
+                    removeUnusedInputsFromEnd(this, 1, /^\d+$/);
+                    addAnyInput(this);
 
-                this.setSize([
-                    Math.max(oldWidth, this.size[0]),
-                    this.size[1]
-                ]);
+                    this.setSize([
+                        Math.max(oldWidth, this.size[0]),
+                        this.size[1]
+                    ]);
+                };
             };
         }
     },

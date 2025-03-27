@@ -89,16 +89,6 @@ app.registerExtension({
                 this.numbers = numbers;
                 this.updateNumbers = updateLineNumbers;
             };
-
-            const onRemoved = nodeType.prototype.onRemoved;
-            nodeType.prototype.onRemoved = function () {
-                const r = onRemoved ? onRemoved.apply(this) : undefined;
-                const input = this.widgets.find((w) => w.name === "list").element;
-
-                if (input.numbersInit == true) {
-                    this.numbers.remove();
-                }
-            };
         }
     },
 });
