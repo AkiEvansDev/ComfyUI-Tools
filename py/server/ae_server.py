@@ -56,11 +56,7 @@ def restart(request):
 async def reset(request):
     try:
         node_id = request.match_info["node_id"]
-        print(reset_registry[node_id])
-        if node_id in reset_registry:
-            reset_registry[node_id] = True
-            return web.json_response(status=200)
-        else:
-            return web.json_response(dict(error="Node not found"), status=404)
+        reset_registry[node_id] = True
+        return web.json_response(status=200)
     except Exception as e:
         return web.json_response(dict(error=str(e)), status=500)
