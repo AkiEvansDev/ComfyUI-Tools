@@ -2,7 +2,6 @@ import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 import { aeApi } from "./api.js"
 
-
 function aeRangeNodeUpdate(event) {
 	let nodes = app.graph._nodes_by_id;
 	let node = nodes[event.detail.node_id];
