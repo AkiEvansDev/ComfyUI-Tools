@@ -391,10 +391,13 @@ class CustomImageSave:
                             metadata.add_text(x, json.dumps(extra_pnginfo[x]))
                 exif_data = metadata
 
-            if filename_number_start:
-                file = f"{counter:0{number_padding}}{delimiter}{filename_prefix}{file_extension}"
+            if filename_prefix.endswith(file_extension):
+                file = filename_prefix
             else:
-                file = f"{filename_prefix}{delimiter}{counter:0{number_padding}}{file_extension}"
+                if filename_number_start:
+                    file = f"{counter:0{number_padding}}{delimiter}{filename_prefix}{file_extension}"
+                else:
+                    file = f"{filename_prefix}{delimiter}{counter:0{number_padding}}{file_extension}"
 
             if os.path.exists(os.path.join(output_path, file)):
                 counter += 1
