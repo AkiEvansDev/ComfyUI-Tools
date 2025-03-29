@@ -1406,6 +1406,8 @@ class BRIARemBGAdvanced:
             "required": {
                 "images": ("IMAGE",),
                 "iterations": ("INT", {"default": 14, "min": 1, "max": 16, "step": 1}),
+                "contrast": ("FLOAT", {"default": 2, "min": -1, "max": 2, "step": 0.01}),
+                "blur": ("INT", {"default": 2, "min": 0, "max": 16, "step": 1}),
             },
         }
 
@@ -1414,8 +1416,9 @@ class BRIARemBGAdvanced:
     FUNCTION = "remove_background"
     CATEGORY = "AE.Tools/Image"
   
-    def remove_background(self, images, iterations):
+    def remove_background(self, images, iterations, contrast, blur):
         processed_images, = ImageLucySharpen().sharpen(images, iterations, 3)
+        processed_images, = ImageAdjustment().image_filters(processed_images, 0, contrast, 1, 1, blur, 0, 0, True)
         processed_images, processed_masks, = BRIARemBG().remove_background(processed_images)
 
         return self.join_image_with_alpha(images, processed_masks)
