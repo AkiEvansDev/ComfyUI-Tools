@@ -25,7 +25,7 @@ app.registerExtension({
 
 				const widget = this.widgets.find((w) => w.name === "seed_value");
 				if (widget) {
-					widget.node = this;
+					//widget.node = this;
 					widget.callback = function (v) {
 						aeApi.resetNode(this.node.id);
 					};

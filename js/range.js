@@ -109,7 +109,7 @@ app.registerExtension({
 				if (nodeData.name === "AE.Range" || nodeData.name === "AE.RangeList") {
 					const widget = this.widgets.find((w) => w.name === "current");
 					if (widget) {
-						widget.node = this;
+						//widget.node = this;
 						widget.callback = function (v) {
 							aeApi.resetNode(this.node.id);
 						};
@@ -118,14 +118,14 @@ app.registerExtension({
 				else if (nodeData.name === "AE.XYRange") {
 					const widgetX = this.widgets.find((w) => w.name === "x");
 					if (widgetX) {
-						widgetX.node = this;
+						//widgetX.node = this;
 						widgetX.callback = function (v) {
 							aeApi.resetNode(this.node.id);
 						};
 					}
 					const widgetY = this.widgets.find((w) => w.name === "y");
 					if (widgetY) {
-						widgetY.node = this;
+						//widgetY.node = this;
 						widgetY.callback = function (v) {
 							aeApi.resetNode(this.node.id);
 						};
