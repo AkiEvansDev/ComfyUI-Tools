@@ -216,6 +216,8 @@ class UpscaleLatentBy:
     CATEGORY = "AE.Tools"
 
     def upscale(self, latent, scale_by):
+        scale_by = round(scale_by, 2)
+
         device = model_management.get_torch_device()
         samples = latent["samples"].to(device=device, dtype=self.dtype)
 

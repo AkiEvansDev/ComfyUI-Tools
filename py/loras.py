@@ -62,6 +62,7 @@ class CustomLoraLoader:
     CATEGORY = "AE.Tools/Lora"
 
     def load_lora(self, model, clip, lora, strength):
+        strength = round(strength, 2)
         name = extract_filename(lora) + ":" + "{:.2f}".format(strength)
         model, clip = LoraLoader().load_lora(model, clip, get_path_by_filename(lora, "loras"), strength, strength)
         return (model, clip, name,)

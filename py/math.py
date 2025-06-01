@@ -49,6 +49,9 @@ class MathFloat:
     CATEGORY = "AE.Tools/Math"
 
     def get_value(self, a, b, action):
+        a = round(a, 2)
+        b = round(b, 2)
+
         if action == "a + b":
             a += b
         elif action == "a - b":
@@ -115,6 +118,8 @@ class CompareFloat:
     CATEGORY = "AE.Tools/Math"
 
     def get_value(self, a, b, action):
+        a = round(a, 2)
+        b = round(b, 2)
         result = False
 
         if action == "a < b":

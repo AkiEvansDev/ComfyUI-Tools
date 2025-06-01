@@ -32,6 +32,8 @@ class OutpaintWithModel:
     CATEGORY = "AE.Tools/Outpaint"
 
     def outpaint(self, model, positive, negative, image, left, top, right, bottom, feathering, noise_percentage, vae, value_seed):
+        noise_percentage = round(noise_percentage, 2)
+
         image, mask, = ImagePadForOutpaint().expand_image(image, left, top, right, bottom, feathering)
         image, = InpaintWithModel().inpaint(model, image, mask, value_seed)
 

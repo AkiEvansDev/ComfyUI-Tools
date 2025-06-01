@@ -76,6 +76,8 @@ class FloatSwitch:
     CATEGORY = "AE.Tools/Switch"
 
     def switch(self, a, b, condition):
+        a = round(a, 2)
+        b = round(b, 2)
         return (a if condition == True else b,)
 
 class StringSwitch:

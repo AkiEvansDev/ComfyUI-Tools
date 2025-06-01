@@ -139,9 +139,9 @@ class ChangeSamplerConfig:
                     if steps:
                         config.steps = steps
                     if cfg:
-                        config.cfg = cfg
+                        config.cfg = round(cfg, 2)
                     if denoise:
-                        config.denoise = denoise
+                        config.denoise = round(denoise, 2)
 
         return (sampler_config, hires_fix_config, img2img_config, outpaint_config,)
 
@@ -179,6 +179,9 @@ class SamplerConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, sampler, scheduler, steps, cfg, denoise, seed_value, mode, even, unique_id):
+        cfg = round(cfg, 2)
+        denoise = round(denoise, 2)
+
         seed_value, = self.seed.get_value(seed_value, mode, even, unique_id)
         return (SamplerConfig(seed=seed_value, sampler=sampler, scheduler=scheduler, steps=steps, cfg=cfg, denoise=denoise),)
 
@@ -222,6 +225,8 @@ class SDXLConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, dimensions, seed_value, mode, even, sampler, scheduler, steps, cfg, unique_id):
+        cfg = round(cfg, 2)
+        
         result = [x.strip() for x in dimensions.split("x")]
         width = int(result[0])
         height = int(result[1].split(" ")[0])
@@ -257,6 +262,10 @@ class ControlNetConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, model, strength, start, end):
+        strength = round(strength, 2)
+        start = round(start, 2)
+        end = round(end, 2)
+
         info = extract_filename(model) + f":{strength} [{start}:{end}]"
         control_net, = ControlNetLoader().load_controlnet(get_path_by_filename(model, "controlnet"))
         return (ControlNetConfig(model=control_net, strength=strength, start=start, end=end), info,)
@@ -281,6 +290,9 @@ class HiresFixConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, scale, steps, denoise, base_config=None):
+        scale = round(scale, 2)
+        denoise = round(denoise, 2)
+
         config = HiresFixConfig(scale=scale, steps=steps, denoise=denoise)
 
         if base_config:
@@ -318,6 +330,11 @@ class Img2ImgConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, use_hires_model, steps, denoise, use_control_net, controlnet, strength, start, end, base_config=None):
+        denoise = round(denoise, 2)
+        strength = round(strength, 2)
+        start = round(start, 2)
+        end = round(end, 2)
+
         config = Img2ImgFixConfig(steps=steps, denoise=denoise, use_hires_model=use_hires_model)
         
         info = "None"
@@ -367,6 +384,12 @@ class OutpaintConfigNode:
     CATEGORY = "AE.Tools/Config"
 
     def get_value(self, use_hires_model, model, steps, denoise, left, top, right, bottom, feathering, noise_percentage, use_control_net, controlnet, strength, start, end, base_config=None):
+        denoise = round(denoise, 2)
+        noise_percentage = round(noise_percentage, 2)
+        strength = round(strength, 2)
+        start = round(start, 2)
+        end = round(end, 2)
+        
         inpaint, = LoadInpaintModel().load(get_path_by_filename(model, "inpaint"))
         config = OutpaintConfig(model=inpaint, left=left, top=top, right=right, bottom=bottom,
                               feathering=feathering, noise_percentage=noise_percentage, 

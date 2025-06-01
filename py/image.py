@@ -64,6 +64,7 @@ class ImagePowerNoise:
     CATEGORY = "AE.Tools/Image"
 
     def power_noise(self, width, height, attenuation, noise_type, value_seed):
+        attenuation = round(attenuation, 2)
         return (pil2tensor( self.generate_power_noise(width, height, attenuation, noise_type, value_seed) ), )
 
     def generate_power_noise(self, width, height, attenuation, noise_type, noise_seed):
@@ -660,6 +661,13 @@ class ImageAdjustment:
     CATEGORY = "AE.Tools/Image/Filter"
 
     def image_filters(self, images, brightness, contrast, saturation, sharpness, blur, gaussian_blur, edge_enhance, detail_enhance):
+        brightness = round(brightness, 2)
+        contrast = round(contrast, 2)
+        saturation = round(saturation, 2)
+        sharpness = round(sharpness, 2)
+        gaussian_blur = round(gaussian_blur, 2)
+        edge_enhance = round(edge_enhance, 2)
+        
         tensors = []
         for image in images:
             pil_image = None
@@ -928,6 +936,8 @@ class ImageHighPassFilter:
     CATEGORY = "AE.Tools/Image/Filter"
 
     def high_pass(self, images, radius, strength, color_output, neutral_background):
+        strength = round(strength, 2)
+
         tensors = []
         for image in images:
             tensors.append(self.apply_hpf(image, radius, strength, color_output, neutral_background))
@@ -972,6 +982,10 @@ class ImageLevels:
     CATEGORY = "AE.Tools/Image/Filter"
 
     def apply_image_levels(self, images, black_level, mid_level, white_level):
+        black_level = round(black_level, 2)
+        mid_level = round(mid_level, 2)
+        white_level = round(white_level, 2)
+        
         tensors = []
         for image in images:
             tensors.append(self.adjust(image, black_level, mid_level, white_level))
@@ -1094,6 +1108,13 @@ class ImageDragonFilter:
     CATEGORY = "AE.Tools/Image/Filter"
 
     def apply_dragan_filter(self, images, saturation, contrast, sharpness, brightness, highpass_samples, highpass_strength, highpass_radius, colorize):
+        saturation = round(saturation, 2)
+        contrast = round(contrast, 2)
+        brightness = round(brightness, 2)
+        sharpness = round(sharpness, 2)
+        highpass_strength = round(highpass_strength, 2)
+        highpass_radius = round(highpass_radius, 2)
+
         tensors = []
         for image in images:
             tensors.append(self.dragan_filter(image, saturation, contrast, sharpness, brightness, highpass_samples, highpass_strength, highpass_radius, colorize))
@@ -1185,6 +1206,8 @@ class ImageBlendMode:
             install_package("pilgram")
 
         import pilgram
+        
+        blend_percentage = round(blend_percentage, 2)
 
         image_a = tensor2pil(image_a)
         image_b = tensor2pil(image_b)
@@ -1246,6 +1269,8 @@ class ImageBlendMask:
     CATEGORY = "AE.Tools/Image"
 
     def image_blend_mask(self, image_a, image_b, mask, blend_percentage):
+        blend_percentage = round(blend_percentage, 2)
+
         image_a = tensor2pil(image_a)
         image_b = tensor2pil(image_b)
 
@@ -1279,6 +1304,8 @@ class GaussianBlurMask:
     CATEGORY = "AE.Tools/Image"
 
     def blur_mask(self, mask, kernel_size, sigma):
+        sigma = round(sigma, 2)
+
         mask = self.make_3d_mask(mask)
         mask = torch.unsqueeze(mask, dim=-1)
         mask = self.tensor_gaussian_blur_mask(mask, kernel_size, sigma)
@@ -1417,6 +1444,8 @@ class BRIARemBGAdvanced:
     CATEGORY = "AE.Tools/Image"
   
     def remove_background(self, images, iterations, contrast, blur):
+        contrast = round(contrast, 2)
+
         processed_images, = ImageLucySharpen().sharpen(images, iterations, 3)
         processed_images, = ImageAdjustment().image_filters(processed_images, 0, contrast, 1, 1, blur, 0, 0, True)
         processed_images, processed_masks, = BRIARemBG().remove_background(processed_images)

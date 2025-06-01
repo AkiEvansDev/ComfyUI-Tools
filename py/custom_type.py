@@ -30,6 +30,7 @@ class Float:
     CATEGORY = "AE.Tools/Type"
 
     def get_value(self, value):
+        value = round(value, 2)
         return (value,)
 
 class String:
