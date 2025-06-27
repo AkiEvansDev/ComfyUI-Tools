@@ -1,7 +1,6 @@
 import os
 import folder_paths
 
-
 DIMENSIONS = [
     "1536 x 640   (landscape)",
     "1344 x 768   (landscape)",
@@ -12,6 +11,9 @@ DIMENSIONS = [
     " 832 x 1216  (portrait)",
     " 768 x 1344  (portrait)",
     " 640 x 1536  (portrait)",
+    "1536 x 1024  (landscape)",
+    "2048 x 2048  (square)",
+    "1024 x 1536  (portrait)",
 ];
 
 SAMPLER = "deis"
