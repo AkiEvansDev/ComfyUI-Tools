@@ -275,7 +275,7 @@ class HiresFixConfigNode:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "scale": ("FLOAT", {"default": 1.5, "min": 1, "max": 4, "step": 0.25}),
+                "scale": ("FLOAT", {"default": 1.5, "min": 1, "max": 4, "step": 0.05}),
                 "steps": ("INT", {"default": 20, "min": 1, "max": 100, "step": 1}),
                 "denoise": ("FLOAT", {"default": 0.6, "min": 0, "max": 1, "step": 0.05}),
             },
